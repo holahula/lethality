@@ -1,0 +1,19 @@
+{
+    "game_state": {
+        "p_health": 20,
+        "o_health": 20,
+        "p_mana": 0,
+        "o_mana": 0,
+        "cards_in_hand": [],
+        "attack_token": true,
+
+        "action_button_text": "GO",
+
+        "p_bench": [ "", "", "", "", "", "", ""],
+        "o_bench": ["", "", "", "", "", "", ""],
+        "p_board": ["", "", "", "", "", "", ""],
+        "o_board": ["", "", "", "", "", "", ""],
+        "spell_stack": []
+    }
+
+}
