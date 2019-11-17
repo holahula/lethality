@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css?family=Reem+Kufi&display=swap');
+
+.Game-columns {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.Opponent{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Opponent-bench{
+    width: 550px;
+    height: 120px;
+    background-color: #252A38;
+    border-radius: 15px 15px 0px 0px;
+    margin-bottom: 5px;
+}
+
+.Opponent-board {
+    width: 730px;
+    height: 180px;
+    background-color: #20283F;
+    border-radius: 10px 10px 0px 0px;
+}
+
+.Description-font {
+    font-family: "Reem Kufi";
+    color: #4A4A4A;
+    margin-left: 20px;
+}
+
+.Player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Spells{
+    margin: 5px;
+}
+
+.Player-board {
+    width: 730px;
+    height: 180px;
+    background-color: #20283F;
+    border-radius: 0px 0px 10px 10px;
+}
+
+.Player-bench {
+    margin-top: 5px;
+    width: 550px;
+    background-color: #252A38;
+    border-radius: 0px 0px 15px 15px;
+}
+
+.Board-row{
+    padding-top: 5px;
+    padding-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.Board-card {
+    height: 140px;
+}
+
+.Bench-row{
+    padding-top: 5px;
+    padding-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.Bench-card{
+    height: 90px;
+}
