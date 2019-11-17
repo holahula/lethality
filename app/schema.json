@@ -4,16 +4,38 @@
         "o_health": 20,
         "p_mana": 0,
         "o_mana": 0,
-        "cards_in_hand": [],
+        "p_spell_mana": 0,
+        "o_spell_mana": 0,
         "attack_token": true,
 
         "action_button_text": "GO",
 
-        "p_bench": [ "", "", "", "", "", "", ""],
-        "o_bench": ["", "", "", "", "", "", ""],
-        "p_board": ["", "", "", "", "", "", ""],
-        "o_board": ["", "", "", "", "", "", ""],
+        "p_bench": [ ["card_id", "uuid"], ["card_id", "uuid"], ["card_id", "uuid"], ["card_id", "uuid"],["card_id", "uuid"],["card_id", "uuid"]],
+        "o_bench": [ ["card_id", "uuid"], ["card_id", "uuid"], ["card_id", "uuid"], ["card_id", "uuid"],["card_id", "uuid"],["card_id", "uuid"]],
+        "p_board": [ ["card_id", "uuid"], ["card_id", "uuid"], ["card_id", "uuid"], ["card_id", "uuid"],["card_id", "uuid"],["card_id", "uuid"]],
+        "o_board": [ ["card_id", "uuid"], ["card_id", "uuid"], ["card_id", "uuid"], ["card_id", "uuid"],["card_id", "uuid"],["card_id", "uuid"]],
+        "cards_in_hand": [ ["card_id", "uuid"], ["card_id", "uuid"], ["card_id", "uuid"], ["card_id", "uuid"],["card_id", "uuid"],["card_id", "uuid"], ["card_id", "uuid"], ["card_id", "uuid"],["card_id", "uuid"],["card_id", "uuid"]],
         "spell_stack": []
+    },
+
+    "update_game_state_request": {
+        "game_state": {},
+        "card_selected": ["card_id", "uuid"],
+        
+        "action": "",
+        "target_object": []
+    },
+
+    "actions": [
+        "dragged_to_bench",
+        "enemies_selected",
+        "dragged_to_board",
+        "passed"
+    ],
+
+    "change": {
+        "action": "died",
+        "card": "string"
     }
 
 }
