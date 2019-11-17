@@ -132,3 +132,9 @@ def fearsome(game, action):
 
 def cant_block(game, action):
     pass
+
+def support(game, action):
+    pass
+
+def level_up(game, action):
+    pass
