@@ -24,7 +24,7 @@ function Header({changeUsername, username, elo}) {
               <Link className="Nav-item" to="/feedback">FEEDBACK</Link>
               <div className="User-profile">
 
-                <div className="User-profile-data" onClick={changeUsername}>
+                <div className="User-profile-data">
                   
                   <div>
                     <img src={profileTeemo} className="User-profile-data-pic"/>
@@ -59,7 +59,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    changeUsername: (username) => dispatch(changeUsername(username)),
+    changeUsername: () => dispatch(changeUsername("Mogen")),
     changeElo: (elo) => dispatch(changeElo(elo))
   }
 }

@@ -1,36 +1,77 @@
 @import url('https://fonts.googleapis.com/css?family=Reem+Kufi&display=swap');
 
+.Game {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
 .Game-columns {
     display: flex;
     flex-direction: row;
     justify-content: center;
 }
-
+.Health-column{
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    justify-content: center;
+}
+.Right-column{
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+}
 .Opponent{
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-end;
 }
-
 .Opponent-bench{
     width: 550px;
-    height: 120px;
     background-color: #252A38;
     border-radius: 15px 15px 0px 0px;
     margin-bottom: 5px;
 }
 
 .Opponent-board {
+    display: flex;
+    align-items: flex-end;
+}
+.Opponent-board-main{
+    display: block;
     width: 730px;
-    height: 180px;
     background-color: #20283F;
     border-radius: 10px 10px 0px 0px;
+}
+.Opponent-board-health{
+    display: flex;
+    align-items: center;
+    margin: 5px;
+}
+.Opponent-board-health-indicator{
+    width: 40px;
+    height: 40px;
+    border-style: solid;
+    border-color: #E82168;
+    border-width: 2px;
+    border-radius: 5px;
+    text-align: center;
+    font-family: "Reem Kufi";
+    font-size: 25px;
+
+    margin-left: 5px;
+    margin-right: 5px;
+    cursor: default;
 }
 
 .Description-font {
     font-family: "Reem Kufi";
     color: #4A4A4A;
     margin-left: 20px;
+    cursor: default;
+    font-size: 12px;
 }
 
 .Player {
@@ -44,8 +85,34 @@
 }
 
 .Player-board {
+    display: flex;
+    align-items: flex-end;
+}
+.Player-board-health{
+    display: flex;
+    align-items: center;
+    margin: 5px;
+    margin-top: 30px;
+}
+.Player-board-health-indicator{
+    width: 40px;
+    height: 40px;
+    border-style: solid;
+    border-color: #215CF3;
+    border-width: 2px;
+    border-radius: 5px;
+    text-align: center;
+    font-family: "Reem Kufi";
+    font-size: 25px;
+
+    margin-left: 5px;
+    margin-right: 5px;
+    cursor: default;
+}
+
+
+.Player-board-main{
     width: 730px;
-    height: 180px;
     background-color: #20283F;
     border-radius: 0px 0px 10px 10px;
 }
@@ -62,11 +129,21 @@
     padding-bottom: 10px;
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
 }
 
 .Board-card {
     height: 140px;
+    cursor: grab;
+    padding-left: 10px;
+    padding-right: 10px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    transition: 0.3s;
+}
+.Board-card:hover {
+    filter: drop-shadow(0px 0px 7px rgb(255, 208, 0));
+    transition: 0.1s;
 }
 
 .Bench-row{
@@ -74,9 +151,128 @@
     padding-bottom: 10px;
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
 }
 
 .Bench-card{
     height: 90px;
+    cursor: grab;
+    padding-left: 10px;
+    padding-right: 10px;
+    transition: 0.5s;
+}
+.Bench-card:hover{
+    filter: drop-shadow(0px 0px 7px rgb(255, 208, 0));
+    transition: 0.1s;
+}
+
+
+
+.Action-button{
+    cursor: pointer;
+    width: 99px;
+    height: 99px;
+    background: linear-gradient(0.25turn, #0085FF, #002FA7);
+    border-radius: 100px;
+    
+    border-style: solid;
+    border-color: #84AEFF;
+    border-width: 4px;
+
+    display: table;
+    text-align: center;
+
+    margin-left: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.Action-button-text{
+    display: table-cell;
+    vertical-align: middle;
+    font-family: "Reem Kufi";
+    font-size: 30px;
+}
+
+.Mana-background{
+    background-color: #20283F;
+    border-style: solid;
+    border-color: #5E5E5E;
+    border-width: 2px;
+    border-radius: 8px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    padding: 2px;
+    margin-left: 20px;  /* compensate for descripton-font margin-left */
+}
+
+.Mana-value{
+    font-family: "Reem Kufi";
+    font-size: 36px;
+    line-height: 36px;
+    margin-left: 5px;
+    margin-right: 5px;
+    cursor: default;
+}
+
+.Mana-block-filled {
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    background-color: #fff;
+    margin: 2px;
+}
+
+.Mana-block-unfilled {
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    border-style: solid;
+    border-color: #fff;
+    box-sizing: border-box;
+    border-width: 1.1px;
+    margin: 2px;
+}
+
+.Game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Deck {
+    margin-top: 20px;
+
+    width: 846px;
+    height: 110px;
+
+    background-image: url("../img/deck-bg.png");
+    background-repeat: no-repeat;
+    background-position: bottom;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.Deck-card {
+    width: 70px;
+    padding-left: 5px;
+    padding-right: 5px;
+    cursor: grab;
+    transition: 0.3s;
+
+    margin-bottom: 10px;
+}
+
+.Deck-card:hover {
+    filter: drop-shadow(0px 0px 7px rgb(255, 208, 0));
+    transition: 0.1s;
+}
+
+.No-grab {
+    cursor: default;
 }

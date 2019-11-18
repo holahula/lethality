@@ -26,6 +26,9 @@ a:hover{
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: space-between;
+
+  -moz-user-select: none;
+  -webkit-user-select: none;
 }
 
 .Logo{
