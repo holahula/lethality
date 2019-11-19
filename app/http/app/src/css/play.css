@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Reem+Kufi&display=swap');
 
+.Hover-card {
+    width: 240px;
+    height: 360px;
+    position: absolute;
+    z-index: 100;
+}
+
 .Game {
     -moz-user-select: none;
     -webkit-user-select: none;
@@ -102,7 +109,7 @@
 
     border-style: dashed;
     border-color: #D99D2A;
-    border-width: 2px;
+    border-width: 3px;
 }
 
 .Player-board-overlay-text {
@@ -148,7 +155,6 @@
     background-color: #252A38;
     border-radius: 0px 0px 15px 15px;
 
-    
 }
 
 .Player-bench-overlay{
@@ -164,7 +170,7 @@
 
     border-style: dashed;
     border-color: #D99D2A;
-    border-width: 2px;
+    border-width: 3px;
 }
 .Player-bench-overlay-text{
     font-family: "Reem Kufi";
@@ -188,6 +194,8 @@
     padding-right: 10px;
     -moz-user-select: none;
     -webkit-user-select: none;
+
+    transition: 0.5s;
 }
 .Board-card:hover {
     filter: drop-shadow(0px 0px 7px rgb(255, 208, 0));
@@ -208,8 +216,7 @@
     cursor: grab;
     padding-left: 10px;
     padding-right: 10px;
-
-    transition-duration: 0.5s;
+    transition: 0.2s;
 }
 .Bench-card:hover{
     filter: drop-shadow(0px 0px 7px rgb(255, 208, 0));
@@ -235,6 +242,19 @@
     margin-left: 20px;
     margin-top: 15px;
     margin-bottom: 15px;
+
+    transition: 0.2s;
+}
+
+.Action-button:hover{
+    border-color: #fff;
+    background: linear-gradient(0.25turn, #006ACC, #001A5F);
+    transition: 0.2s;
+}
+
+.Action-button:active{
+    border-color: rgb(84, 104, 143);
+    transition: 0.2s;
 }
 
 .Action-button-text{
@@ -306,7 +326,6 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    overflow: auto;
 }
 
 .Deck-card {

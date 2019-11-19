@@ -10,8 +10,8 @@ import React from 'react';
 import Header from './modules/header';
 // routes
 import Play from './routes/play';
+import Create from './routes/create';
 import Rankings from './routes/rankings';
-import Feedback from './routes/feedback';
 
 function App() {
   return (
@@ -24,8 +24,8 @@ function App() {
         <Route path="/rankings">
           <Rankings />
         </Route>
-        <Route path="/feedback">
-          <Feedback />
+        <Route path="/create">
+          <Create />
         </Route>
         <Route path="/">
           <Play />

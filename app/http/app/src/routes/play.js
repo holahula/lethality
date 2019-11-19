@@ -1,13 +1,21 @@
 import '../css/play.css';
 import React from 'react';
+import {findDOMNode} from 'react-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { connect } from 'react-redux';
 
-import { reorderHand, cardMovedFromHandToBench } from '../actions/MainActions';
+import {
+    reorderHand,
+    cardMovedFromHandToBench,
+    cardMovedFromBenchToBoard,
+    cardMovedFromBoardToBench,
+
+    hoveredOverCard,
+    hoveredAwayFromCard
+} from '../actions/MainActions';
 
 function onDragEnd (result, board, dispatch) {
     const {source, destination} = result;
-    console.log(source, destination);
     if (!destination){return}
 
     if (source.droppableId === destination.droppableId) {
@@ -27,21 +35,65 @@ function onDragEnd (result, board, dispatch) {
         dispatch(cardMovedFromHandToBench(board, source.index));
     }
 
+    if (source.droppableId === "bench" && destination.droppableId === "board") {
+        dispatch(cardMovedFromBenchToBoard(board, source.index));
+    }
+
+    if (source.droppableId === "board" && destination.droppableId === "bench") {
+        dispatch(cardMovedFromBoardToBench(board, source.index));
+    }
+}
+
+function onMouseEnter(data, card, dispatch) {
+    dispatch(hoveredOverCard(card, data.clientX, data.clientY));
+}
+function onMouseExit(data, dispatch) {
+    dispatch(hoveredAwayFromCard());
+}
+function hoverOverCard(data, card, dispatch) {
+    dispatch(hoveredOverCard(card, data.clientX, data.clientY));
+}
+
+function getHoverCardURL(hover) {
+    const imgURL = "https://storage.googleapis.com/lethality/cards/" + hover.card.card_id + '-COMPRESSED.png';
+    return imgURL;
+}
+function getHoverCardStyle(hover) {
+    let top = hover.y - 370;
+    if(top < 20) {
+        top = hover.y - 15;
+    }
+    const style = {
+        display: hover.visible? "block" : "none",
+        left: hover.x+20,
+        top: top,
+    }
+    return style;
 }
 
 function draggingOverBench(snapshot, board) {
 
     let hand = board.cards_in_hand;
-    // only show "move to bench" UI if the card is from the hand
-    let is_card_from_deck = false;
+    let p_board = board.p_board;
+    // show "move to bench" UI if the card is from the hand
+    let is_valid_card = false;
     for (let i=0; i<hand.length; i++){
         if (hand[i].uuid === snapshot.draggingOverWith) {
-            is_card_from_deck = true;
+            is_valid_card = true;
             break;
         }
     }
+
+    // or if the card is from the board
+    for (let i=0; i<p_board.length; i++){
+        if (p_board[i].uuid === snapshot.draggingOverWith) {
+            is_valid_card = true;
+            break;
+        }
+    }
+
     return {
-        display: (snapshot.isDraggingOver && is_card_from_deck) ? "flex": "none"
+        display: (snapshot.isDraggingOver && is_valid_card) ? "flex": "none"
     }
 }
 
@@ -61,7 +113,7 @@ function draggingOverBoard(snapshot, board) {
     }
 }
 
-function renderPlayerHand(board) {
+function renderPlayerHand(board, dispatch) {
     let cards = board.cards_in_hand
     let render_obj = cards.map( (card, index) => {
         //let cardImage = require('../img/cards/' + card.card_id + '.png');
@@ -80,6 +132,10 @@ function renderPlayerHand(board) {
 
                         style={provided.draggableProps.style}
 
+                        onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
+                        onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
+                        onMouseLeave={(event) => onMouseExit(event, dispatch)}
+
                         />
                 )}
             </Draggable>
@@ -90,7 +146,7 @@ function renderPlayerHand(board) {
 }
 
 
-function renderPlayerBench(cards) {
+function renderPlayerBench(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
         // let cardImage = require('../img/cards/' + card.card_id + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
@@ -102,11 +158,16 @@ function renderPlayerBench(cards) {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
 
+                        key={index}
                         index={index}
                         src={cardImage}
                         className="Bench-card"
 
                         style={provided.draggableProps.style}
+
+                        onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
+                        onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
+                        onMouseLeave={(event) => onMouseExit(event, dispatch)}
                      />
                     
                 )}
@@ -117,30 +178,58 @@ function renderPlayerBench(cards) {
     return render_obj;
 }
 
-function renderPlayerBoard(cards) {
+function renderPlayerBoard(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
         // let cardImage = require('../img/cards/' + card.card_id + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
-        return <img index={index} key={index} src={cardImage} className="Board-card"/>;
+        return (
+            <Draggable key={card.uuid} index={index} draggableId={card.uuid}>
+                {(provided, snapshot) => (
+                    <img
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+
+                        index={index}
+                        key={index}
+                        src={cardImage}
+                        className="Board-card"
+                        style={provided.draggableProps.style}
+
+                        onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
+                        onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
+                        onMouseLeave={(event) => onMouseExit(event, dispatch)}
+                    />
+                )}
+            </Draggable>
+        );
     });
     return render_obj;
 }
 
 
-function renderOpponentBench(cards) {
+function renderOpponentBench(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
         //let cardImage = require('../img/cards/' + card.card_id + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
-        return <img index={index} src={cardImage} className="Bench-card No-grab"/>;
+        return <img index={index} src={cardImage} className="Bench-card No-grab"
+            onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
+            onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
+            onMouseLeave={(event) => onMouseExit(event, dispatch)}
+        />;
     });
     return render_obj;
 }
 
-function renderOpponentBoard(cards) {
+function renderOpponentBoard(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
         //let cardImage = require('../img/cards/' + card.card_id + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
-        return <img index={index} src={cardImage} className="Board-card No-grab"/>;
+        return <img index={index} src={cardImage} className="Board-card No-grab"
+            onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
+            onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
+            onMouseLeave={(event) => onMouseExit(event, dispatch)}
+        />;
     });
     return render_obj;
 }
@@ -168,10 +257,13 @@ function renderManaIndicators(mana) {
 }
 
 
-function Play({board, dispatch}) {
+function Play({game_state, dispatch}) {
+    let board = game_state.game_state;
+    let hover = game_state.hover;
+
     return (
             <div className="Game">
-
+                <img className="Hover-card" id="Hover-card" src={getHoverCardURL(hover)} style={getHoverCardStyle(hover)}/>
                 <div className="Game-columns">
                     <div className="Health-column">
                         <div className="Opponent-board-health">
@@ -193,14 +285,14 @@ function Play({board, dispatch}) {
                             <div className="Opponent-bench">
                                 <span className="Description-font">OPPONENT BENCH</span>
                                 <div className="Bench-row">
-                                    {renderOpponentBench(board.o_bench)}
+                                    {renderOpponentBench(board.o_bench, dispatch)}
                                 </div>
                             </div>
                             <div className="Opponent-board">
                                 <div className="Opponent-board-main">
                                     <span className="Description-font">OPPONENT BOARD</span>
                                     <div className="Board-row">
-                                        {renderOpponentBoard(board.o_board)}
+                                        {renderOpponentBoard(board.o_board, dispatch)}
                                     </div>
                                 </div>
                             </div>
@@ -217,13 +309,13 @@ function Play({board, dispatch}) {
                                     {(provided, snapshot) => (
                                         <div className="Player-board">
                                             <div className="Player-board-overlay"style={draggingOverBoard(snapshot, board)}>
-                                                <span className="Player-board-overlay-text">PLAY CARD</span>
+                                                <span className="Player-board-overlay-text">&uarr; PLAY CARD &uarr;</span>
                                             </div>
 
                                             <div className="Player-board-main">
                                                 <span className="Description-font">PLAYER BOARD</span>
                                                 <div className="Board-row" ref={provided.innerRef}>
-                                                    {renderPlayerBoard(board.p_board)}
+                                                    {renderPlayerBoard(board.p_board, dispatch)}
                                                 </div>
                                             </div>
                                         </div>
@@ -234,11 +326,11 @@ function Play({board, dispatch}) {
                                     {(provided, snapshot) => (
                                         <div className="Player-bench">
                                             <div className="Player-bench-overlay"style={draggingOverBench(snapshot, board)}>
-                                                <span className="Player-bench-overlay-text">MOVE TO BENCH</span>
+                                                <span className="Player-bench-overlay-text">&rarr; MOVE TO BENCH &larr;</span>
                                             </div>
                                             <span className="Description-font">PLAYER BENCH</span>
                                             <div className="Bench-row"  ref={provided.innerRef} {...provided.droppableProps}>
-                                                {renderPlayerBench(board.p_bench)}
+                                                {renderPlayerBench(board.p_bench, dispatch)}
                                             </div>
                                         </div>
                                     )}
@@ -247,7 +339,7 @@ function Play({board, dispatch}) {
                                 <Droppable droppableId="hand" direction="horizontal">
                                     {(provided, snapshot) => (
                                         <div className="Deck" ref={provided.innerRef} {...provided.droppableProps}>
-                                            {renderPlayerHand(board)}
+                                            {renderPlayerHand(board, dispatch)}
                                             {provided.placeholder}
                                         </div>
                                     )}
@@ -298,7 +390,7 @@ function Play({board, dispatch}) {
 
 const mapStateToProps = state => {
     return {
-        board: state.game_state,
+        game_state: state,
     }
 }
 
