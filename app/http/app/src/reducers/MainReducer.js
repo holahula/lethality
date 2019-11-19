@@ -1,11 +1,12 @@
 import {
     CHANGE_USERNAME,
     CHANGE_ELO,
-    REORDER_HAND
+    REORDER_HAND,
+    MOVED_TO_BENCH
 } from '../actions/MainActions';
 import DataDragon from '../DataDragon';
 
-const cardSchema =(card_id, effect_status) => {
+const cardSchema = (card_id, effect_status) => {
     return {
         card_id: "",
         uuid: "",
@@ -36,10 +37,10 @@ const initialState = {
 
         "action_button_text": "GO",
 
-        "p_bench": cardGenerator(6),
-        "o_bench": cardGenerator(6),
+        "p_bench": cardGenerator(2),
+        "o_bench": cardGenerator(2),
         "p_board": cardGenerator(3),
-        "o_board": cardGenerator(6),
+        "o_board": cardGenerator(1),
         "cards_in_hand": cardGenerator(10),
         "spell_stack": []
     }
@@ -61,6 +62,10 @@ function lethalApp(state = initialState, action) {
             return Object.assign({}, state, {
                 game_state: action.game_state
             })
+        case MOVED_TO_BENCH:
+                return Object.assign({}, state, {
+                    game_state: action.game_state
+                })
         default:
             return state;
     }

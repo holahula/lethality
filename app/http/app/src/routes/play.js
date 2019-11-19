@@ -2,8 +2,149 @@ import '../css/play.css';
 import React from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { connect } from 'react-redux';
-import samplecard from '../img/cards/01DE009.png';
-import deck_bg from '../img/deck-bg.png';
+
+import { reorderHand, cardMovedFromHandToBench } from '../actions/MainActions';
+
+function onDragEnd (result, board, dispatch) {
+    const {source, destination} = result;
+    console.log(source, destination);
+    if (!destination){return}
+
+    if (source.droppableId === destination.droppableId) {
+        // source = destination
+        switch(source.droppableId) {
+            case "hand":
+                // re-order the cards in hand
+                dispatch(reorderHand(board, source.index, destination.index));
+                return;
+            default:
+                return;
+        }
+        // re-order the cards in hand
+    }
+
+    if (source.droppableId === "hand" && destination.droppableId === "bench") {
+        dispatch(cardMovedFromHandToBench(board, source.index));
+    }
+
+}
+
+function draggingOverBench(snapshot, board) {
+
+    let hand = board.cards_in_hand;
+    // only show "move to bench" UI if the card is from the hand
+    let is_card_from_deck = false;
+    for (let i=0; i<hand.length; i++){
+        if (hand[i].uuid === snapshot.draggingOverWith) {
+            is_card_from_deck = true;
+            break;
+        }
+    }
+    return {
+        display: (snapshot.isDraggingOver && is_card_from_deck) ? "flex": "none"
+    }
+}
+
+function draggingOverBoard(snapshot, board) {
+    // return { display: "flex" } // use for designing layout
+    let bench = board.p_bench;
+    let is_card_from_deck = false;
+    for (let i=0; i<bench.length; i++){
+        if (bench[i].uuid === snapshot.draggingOverWith) {
+            is_card_from_deck = true;
+            break;
+        }
+    }
+
+    return {
+        display: (snapshot.isDraggingOver && is_card_from_deck) ? "flex": "none"
+    }
+}
+
+function renderPlayerHand(board) {
+    let cards = board.cards_in_hand
+    let render_obj = cards.map( (card, index) => {
+        //let cardImage = require('../img/cards/' + card.card_id + '.png');
+        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
+        return (
+            <Draggable key={card.uuid} index={index} draggableId={card.uuid}>
+                {(provided, snapshot) => (
+                    <img
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+
+                        key={index}
+                        src={cardImage}
+                        className="Deck-card"
+
+                        style={provided.draggableProps.style}
+
+                        />
+                )}
+            </Draggable>
+            
+        );
+    });
+    return render_obj;
+}
+
+
+function renderPlayerBench(cards) {
+    let render_obj = cards.map( (card, index) => {
+        // let cardImage = require('../img/cards/' + card.card_id + '.png');
+        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
+        return (
+            <Draggable key={card.uuid} index={index} draggableId={card.uuid}>
+                {(provided, snapshot) => (
+                     <img
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+
+                        index={index}
+                        src={cardImage}
+                        className="Bench-card"
+
+                        style={provided.draggableProps.style}
+                     />
+                    
+                )}
+               
+            </Draggable>
+        );
+    });
+    return render_obj;
+}
+
+function renderPlayerBoard(cards) {
+    let render_obj = cards.map( (card, index) => {
+        // let cardImage = require('../img/cards/' + card.card_id + '.png');
+        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
+        return <img index={index} key={index} src={cardImage} className="Board-card"/>;
+    });
+    return render_obj;
+}
+
+
+function renderOpponentBench(cards) {
+    let render_obj = cards.map( (card, index) => {
+        //let cardImage = require('../img/cards/' + card.card_id + '.png');
+        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
+        return <img index={index} src={cardImage} className="Bench-card No-grab"/>;
+    });
+    return render_obj;
+}
+
+function renderOpponentBoard(cards) {
+    let render_obj = cards.map( (card, index) => {
+        //let cardImage = require('../img/cards/' + card.card_id + '.png');
+        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
+        return <img index={index} src={cardImage} className="Board-card No-grab"/>;
+    });
+    return render_obj;
+}
+
 
 function renderManaIndicators(mana) {
     let mana_to_arr = [];
@@ -26,77 +167,8 @@ function renderManaIndicators(mana) {
     return render_obj;
 }
 
-function onDragEnd (result) {
-    const {source, destination} = result;
-    if (!destination){return}
-    if (source.droppableId === destination.droppableId === "hand") {
 
-    }
-}
-
-function reorderHand(board, index_old, index_new) {
-    
-}
-
-function renderPlayerHand(cards, board) {
-    let render_obj = cards.map( (card, index) => {
-        let cardImage = require('../img/cards/' + card.card_id + '.png');
-        return (
-            <Draggable key={card.uuid} index={index} draggableId={card.uuid}>
-                {(provided, snapshot) => (
-                    <img
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-
-                        key={index}
-                        index={index}
-
-                        src={cardImage}
-                        className="Deck-card"
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}/>
-                )}
-            </Draggable>
-            
-        );
-    });
-    return render_obj;
-}
-
-function renderOpponentBench(cards) {
-    let render_obj = cards.map( (card, index) => {
-        let cardImage = require('../img/cards/' + card.card_id + '.png');
-        return <img index={index} src={cardImage} className="Bench-card No-grab"/>;
-    });
-    return render_obj;
-}
-
-function renderOpponentBoard(cards) {
-    let render_obj = cards.map( (card, index) => {
-        let cardImage = require('../img/cards/' + card.card_id + '.png');
-        return <img index={index} src={cardImage} className="Board-card No-grab"/>;
-    });
-    return render_obj;
-}
-
-function renderPlayerBench(cards) {
-    let render_obj = cards.map( (card, index) => {
-        let cardImage = require('../img/cards/' + card.card_id + '.png');
-        return <img index={index} src={cardImage} className="Bench-card"/>;
-    });
-    return render_obj;
-}
-
-function renderPlayerBoard(cards) {
-    let render_obj = cards.map( (card, index) => {
-        let cardImage = require('../img/cards/' + card.card_id + '.png');
-        return <img index={index} src={cardImage} className="Board-card"/>;
-    });
-    return render_obj;
-}
-
-function Play({board}) {
+function Play({board, dispatch}) {
     return (
             <div className="Game">
 
@@ -139,11 +211,15 @@ function Play({board}) {
                         </div>
 
                         <div className="Player">
-                            <DragDropContext onDragEnd={onDragEnd}>
+                            <DragDropContext onDragEnd={(result) => onDragEnd(result, board, dispatch)}>
 
                                 <Droppable droppableId="board" direction="horizontal">
-                                    {(provided, snapshop) => (
+                                    {(provided, snapshot) => (
                                         <div className="Player-board">
+                                            <div className="Player-board-overlay"style={draggingOverBoard(snapshot, board)}>
+                                                <span className="Player-board-overlay-text">PLAY CARD</span>
+                                            </div>
+
                                             <div className="Player-board-main">
                                                 <span className="Description-font">PLAYER BOARD</span>
                                                 <div className="Board-row" ref={provided.innerRef}>
@@ -157,19 +233,22 @@ function Play({board}) {
                                 <Droppable droppableId="bench" direction="horizontal">
                                     {(provided, snapshot) => (
                                         <div className="Player-bench">
+                                            <div className="Player-bench-overlay"style={draggingOverBench(snapshot, board)}>
+                                                <span className="Player-bench-overlay-text">MOVE TO BENCH</span>
+                                            </div>
                                             <span className="Description-font">PLAYER BENCH</span>
-                                            <div className="Bench-row"  ref={provided.innerRef}>
+                                            <div className="Bench-row"  ref={provided.innerRef} {...provided.droppableProps}>
                                                 {renderPlayerBench(board.p_bench)}
                                             </div>
                                         </div>
                                     )}
-                                    
                                 </Droppable>
                                
                                 <Droppable droppableId="hand" direction="horizontal">
                                     {(provided, snapshot) => (
-                                        <div className="Deck" ref={provided.innerRef}>
-                                            {renderPlayerHand(board.cards_in_hand, board)}
+                                        <div className="Deck" ref={provided.innerRef} {...provided.droppableProps}>
+                                            {renderPlayerHand(board)}
+                                            {provided.placeholder}
                                         </div>
                                     )}
                                     

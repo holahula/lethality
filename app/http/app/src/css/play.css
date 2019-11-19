@@ -22,7 +22,7 @@
     flex-direction: column;
     justify-content: center;
 }
-.Opponent{
+.Opponent{ 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -88,6 +88,30 @@
     display: flex;
     align-items: flex-end;
 }
+
+.Player-board-overlay{
+    position: absolute;
+    z-index: 100;
+    width: 730px;
+    height: 170px;
+    background-color: #182340;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-style: dashed;
+    border-color: #D99D2A;
+    border-width: 2px;
+}
+
+.Player-board-overlay-text {
+    font-family: "Reem Kufi";
+    color: #D99D2A;
+    font-size: 20px;
+    z-index: 101;
+}
+
 .Player-board-health{
     display: flex;
     align-items: center;
@@ -120,8 +144,33 @@
 .Player-bench {
     margin-top: 5px;
     width: 550px;
+    height: 140px;
     background-color: #252A38;
     border-radius: 0px 0px 15px 15px;
+
+    
+}
+
+.Player-bench-overlay{
+    position: absolute;
+    z-index: 100;
+    width: 550px;
+    height: 130px;
+    background-color: #182340;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-style: dashed;
+    border-color: #D99D2A;
+    border-width: 2px;
+}
+.Player-bench-overlay-text{
+    font-family: "Reem Kufi";
+    color: #D99D2A;
+    font-size: 20px;
+    z-index: 101;
 }
 
 .Board-row{
@@ -139,7 +188,6 @@
     padding-right: 10px;
     -moz-user-select: none;
     -webkit-user-select: none;
-    transition: 0.3s;
 }
 .Board-card:hover {
     filter: drop-shadow(0px 0px 7px rgb(255, 208, 0));
@@ -155,11 +203,13 @@
 }
 
 .Bench-card{
-    height: 90px;
+    width: 70px;
+    height: 105px;
     cursor: grab;
     padding-left: 10px;
     padding-right: 10px;
-    transition: 0.5s;
+
+    transition-duration: 0.5s;
 }
 .Bench-card:hover{
     filter: drop-shadow(0px 0px 7px rgb(255, 208, 0));
@@ -256,20 +306,21 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    overflow: auto;
 }
 
 .Deck-card {
     width: 70px;
+    height: 105px;
     padding-left: 5px;
     padding-right: 5px;
-    cursor: grab;
-    transition: 0.3s;
 
+    cursor: grab;
     margin-bottom: 10px;
 }
 
 .Deck-card:hover {
-    filter: drop-shadow(0px 0px 7px rgb(255, 208, 0));
+    filter: drop-shadow(0px 0px 8px rgb(255, 208, 0));
     transition: 0.1s;
 }
 
