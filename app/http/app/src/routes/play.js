@@ -1,6 +1,5 @@
 import '../css/play.css';
 import React from 'react';
-import {findDOMNode} from 'react-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { connect } from 'react-redux';
 
@@ -55,6 +54,7 @@ function hoverOverCard(data, card, dispatch) {
 }
 
 function getHoverCardURL(hover) {
+    if (!hover.card.card_id) { return; }
     const imgURL = "https://storage.googleapis.com/lethality/cards/" + hover.card.card_id + '-COMPRESSED.png';
     return imgURL;
 }
@@ -234,6 +234,19 @@ function renderOpponentBoard(cards, dispatch) {
     return render_obj;
 }
 
+function renderSpells(cards, dispatch) {
+    let render_obj = cards.map( (card, index) => {
+        const url = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '.png';
+        return (
+            <img className="One-spell" index={index} src={url}
+                onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
+                onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
+                onMouseLeave={(event) => onMouseExit(event, dispatch)}
+            />
+        );
+    });
+    return render_obj;
+}
 
 function renderManaIndicators(mana) {
     let mana_to_arr = [];
@@ -256,24 +269,26 @@ function renderManaIndicators(mana) {
     return render_obj;
 }
 
-
 function Play({game_state, dispatch}) {
     let board = game_state.game_state;
     let hover = game_state.hover;
+    let spells = game_state.game_state.spell_stack;
 
     return (
             <div className="Game">
-                <img className="Hover-card" id="Hover-card" src={getHoverCardURL(hover)} style={getHoverCardStyle(hover)}/>
+                <img className="Hover-card"
+                    src={getHoverCardURL(hover)}
+                    style={getHoverCardStyle(hover)}/>
                 <div className="Game-columns">
                     <div className="Health-column">
                         <div className="Opponent-board-health">
-                            <span className="Description-font">OPPONENT HEALTH</span>
+                        <span className="Description-font">OPPONENT</span>
                             <div className="Opponent-board-health-indicator">
                                 {board.o_health}
                             </div>
                         </div>
                         <div className="Player-board-health">
-                            <span className="Description-font">PLAYER HEALTH</span>
+                            <span className="Description-font">YOU</span>
                             <div className="Player-board-health-indicator">
                                 {board.p_health}
                             </div>
@@ -299,7 +314,7 @@ function Play({game_state, dispatch}) {
                         </div>
                         
                         <div className="Spells">
-                            
+                            {renderSpells(spells, dispatch)}
                         </div>
 
                         <div className="Player">
@@ -359,11 +374,11 @@ function Play({game_state, dispatch}) {
                     <div className="Right-column">
 
                         <div className="Opponent-mana">
-                            <span className="Description-font">OPPONENT MANA</span>
                             <div className="Mana-background">
                                 <span className="Mana-value">{board.o_mana}</span>
                                 {renderManaIndicators(board.o_mana)}
                             </div>
+                            <span className="Description-font">OPPONENT MANA</span>
                         </div>
 
                         <div className="Action-button-container">

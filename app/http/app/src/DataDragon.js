@@ -12,6 +12,7 @@ class DataDragon {
             card_id: card.cardCode,
             uuid: uuidv4(),
             effect_status: [],
+            hp: 4,
         }
     }
 

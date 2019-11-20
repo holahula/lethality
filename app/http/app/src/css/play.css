@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Reem+Kufi&display=swap');
 
+
 .Hover-card {
     width: 240px;
     height: 360px;
@@ -10,24 +11,33 @@
 .Game {
     -moz-user-select: none;
     -webkit-user-select: none;
+
+    background-size:cover;
+    transition: 1s;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .Game-columns {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    width: 100%;
+    height: 100%;
 }
 .Health-column{
     display: flex;
     align-items: flex-end;
     flex-direction: column;
     justify-content: center;
+    margin-bottom: 110px;
 }
 .Right-column{
     display: flex;
     align-items: flex-start;
     flex-direction: column;
     justify-content: center;
+    margin-bottom: 110px;
 }
 .Opponent{ 
     display: flex;
@@ -37,7 +47,7 @@
 }
 .Opponent-bench{
     width: 550px;
-    background-color: #252A38;
+    background-color: rgba(37, 42, 56, 0.548);
     border-radius: 15px 15px 0px 0px;
     margin-bottom: 5px;
 }
@@ -49,7 +59,7 @@
 .Opponent-board-main{
     display: block;
     width: 730px;
-    background-color: #20283F;
+    background-color: rgba(37, 42, 56, 0.548);
     border-radius: 10px 10px 0px 0px;
 }
 .Opponent-board-health{
@@ -67,6 +77,8 @@
     text-align: center;
     font-family: "Reem Kufi";
     font-size: 25px;
+    
+    background: rgba(0, 0, 0, 0.185);
 
     margin-left: 5px;
     margin-right: 5px;
@@ -75,10 +87,13 @@
 
 .Description-font {
     font-family: "Reem Kufi";
-    color: #4A4A4A;
+    color: rgb(255, 255, 255);
     margin-left: 20px;
     cursor: default;
     font-size: 12px;
+    word-spacing: 2pt;
+
+    filter: drop-shadow(0px 2px 2px rgb(0, 0, 0, 0.5));
 }
 
 .Player {
@@ -88,7 +103,23 @@
 }
 
 .Spells{
-    margin: 5px;
+    margin: 3px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.One-spell{
+    width: 70px;
+    height: 56px;
+    object-fit: cover;
+    object-position: 100% 0;
+
+    transition: 0.1s;
+}
+.One-spell:hover{
+    filter: drop-shadow(0px 0px 7px rgb(255, 208, 0));
+    transition: 0.1s;
 }
 
 .Player-board {
@@ -135,6 +166,7 @@
     text-align: center;
     font-family: "Reem Kufi";
     font-size: 25px;
+    background: rgba(0, 0, 0, 0.185);
 
     margin-left: 5px;
     margin-right: 5px;
@@ -144,7 +176,7 @@
 
 .Player-board-main{
     width: 730px;
-    background-color: #20283F;
+    background-color: rgba(37, 42, 56, 0.548);
     border-radius: 0px 0px 10px 10px;
 }
 
@@ -152,9 +184,8 @@
     margin-top: 5px;
     width: 550px;
     height: 140px;
-    background-color: #252A38;
+    background-color: rgba(37, 42, 56, 0.548);
     border-radius: 0px 0px 15px 15px;
-
 }
 
 .Player-bench-overlay{
@@ -187,6 +218,9 @@
     justify-content: center;
 }
 
+.Board-column {
+    
+}
 .Board-card {
     height: 140px;
     cursor: grab;
@@ -265,9 +299,9 @@
 }
 
 .Mana-background{
-    background-color: #20283F;
+    background-color: rgba(0, 0, 0, 0.185);
     border-style: solid;
-    border-color: #5E5E5E;
+    border-color: rgba(255,255,255,0.6);
     border-width: 2px;
     border-radius: 8px;
 
@@ -311,6 +345,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    height: 100%;
 }
 
 .Deck {
