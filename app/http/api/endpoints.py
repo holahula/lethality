@@ -14,19 +14,28 @@ CORS(app)
 
 # https://developer.okta.com/blog/2018/12/20/crud-app-with-python-flask-react
 
-# Requires - int: elo
-# Returns - puzzle
-@app.route("/puzzle/<int:elo>", methods = ["GET", "POST"])
-def puzzle(elo):
+# Returns the next puzzle based on elo
+@app.route("/puzzles/<int:elo>", methods = ["GET"])
+def next_puzzle(elo):
+    puzzles = PuzzleService().find_all_puzzles()
+    closest_elo = min(puzzles, key=lambda x:abs(x['elo']-elo))
+    puzzle = PuzzleService(closest_elo['puzzle_id']).find_puzzle()
+    if(puzzle):
+        return json_response(puzzle)
+    else:
+        return json_response({'error': 'no puzzles found'}, 404)
+
+@app.route("/puzzle/<int:id>", methods = ["GET", "POST", "PUT", "DELETE"])
+def puzzle_functions(puzzle_id):
     if flask.request.method == 'GET':
-        puzzle = PuzzleService(g.elo).get_puzzle(elo)
+        puzzle = PuzzleService(g.puzzle_id).find_puzzle()
 
         if(puzzle):
             return json_response(puzzle)
         else:
             return json_response({'error': 'no puzzles found'}, 404)
 
-    else if flask.request.method == 'POST':
+    elif flask.request.method == 'POST':
         puzzle_req = PuzzleSchema().load(json.loads(request.data))
 
         if puzzle_req.errors:
@@ -35,19 +44,36 @@ def puzzle(elo):
         puzzle = PuzzleService().create_puzzle(puzzle_req)
         return json_response(puzzle)
 
+    elif flask.request.method == 'PUT':
+        puzzle_req = PuzzleSchema().load(json.loads(request.data))
+
+        if puzzle_req.errors:
+            return json_response({'error': puzzle_req.error})
+        
+        puzzle_service=PuzzleService(g.puzzle_id)
+        if puzzle_service.update_puzzle(elo, puzzle_req)
+
+    else:
+        puzzle_service = PuzzleService(g.puzzle_id)
+        if puzzle_service.delete_puzzle():
+            return json_response({})
+        else:
+            return json_response({'error': 'puzzle not found'}, 404)
+
+
 # Requires: username:string
 # Returns: user: app.idp.user
 @app.route("/user/<string:username>", methods = ["GET", "POST"]) 
 def user(username)
     if flask.request.method == 'GET':
-        user = IdentityService(g.user).get_user(username)
+        user = IdentityService(g.user).find_user(username)
 
         if(user):
             return json_response(user)
         else:
             return json_response({'error': 'user not found'}, 404)
     
-    else if flask.request.method == 'GET':
+    elif flask.request.method == 'POST':
         user_req = IdentitySchema().load(json.loads(request.data))
 
         if user_req.errors:
@@ -55,6 +81,7 @@ def user(username)
             
         user = IdentityService().create_user(user_req)
         return json_response(user)
+
 
 # POST:
 # {
@@ -99,3 +126,6 @@ def process_move():
 #  |  |    \   /`./          
 #  |\/|  \  `-'  /
 #  || |   \     /            VK
+
+def json_response(payload, status=200):
+    return (json.dumps(payload), status, {'content-type': 'application/json'})
