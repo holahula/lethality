@@ -1,4 +1,6 @@
-import requests, json
+import requests
+import json
+
 class Service(object):
 
     # 1-to-1 matching with easy endpoints for mogen
@@ -56,13 +58,11 @@ class Service(object):
                 if card["uuid"] == action["uuid"]:
                     # Get the wanted card_data, use up its mana and move it to the bench
                     card_data = self.get_card_data(card["card_id"])
-                    game["p_mana"]-=card_data["cost"]
+                    game["p_mana"] -= card_data["cost"]
                     game["p_bench"].append(card)
                     game['hand'].remove(card)
         else:
             pass
-
-                    
 
     def play_spell(self, game, action):
         # puts spell onto spell stack
@@ -71,9 +71,9 @@ class Service(object):
                 if card["uuid"] == action["uuid"]:
                     # Remove spell mana first, then use normal mana, remove card from hand and put to spell stack
                     card_data = self.get_card_data(card["card_id"])
-                    card_data["cost"]=- game["p_spell_mana"]
+                    card_data["cost"] = - game["p_spell_mana"]
                     game["p_spell_mana"] = 0
-                    game["p_mana"] -=card_data["cost"]
+                    game["p_mana"] -= card_data["cost"]
                     game["spell_stack"].append(card)
                     game["hand"].remove(card)
         pass
@@ -198,11 +198,11 @@ class Service(object):
         pass
 
     def get_card_data(self, id):
-        #Gets card data, converts to json
+        # Gets card data, converts to json
         r = requests.get("https://storage.googleapis.com/lethality/card_data/" + id + ".json")
         obj = json.loads(r.text)
         return obj
-    
+
     def check_mana(self, game, action):
         # Checks if you have the mana to play the card, returns boolean
         card_id = self.find_id(game, action)
