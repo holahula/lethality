@@ -1,8 +1,8 @@
 import '../App.css';
 import React from 'react';
 
-export default function Feedback() {
+export default function Create() {
     return (
-        <p>Feedback</p>
+        <p>Create</p>
     );
 }
