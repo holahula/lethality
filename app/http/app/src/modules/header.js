@@ -3,7 +3,7 @@ import {
   } from "react-router-dom";
 
 import { connect } from 'react-redux';
-import { changeUsername, changeElo } from '../actions/MainActions';
+import { signOut } from '../actions/MainActions';
 
 import '../App.css';
 import React from 'react';
@@ -11,7 +11,11 @@ import logo from '../img/logo.png';
 import powerOff from '../img/power-off.png';
 import profileTeemo from '../img/profile_teemo.png';
 
-function Header({changeUsername, username, elo}) {
+function signOut_L(dispatch) {
+  dispatch(signOut());
+}
+
+function Header({username, elo, dispatch}) {
         return (
           <div className="Header">
             <div>
@@ -40,7 +44,7 @@ function Header({changeUsername, username, elo}) {
                 </div>
 
                 <div>
-                  <img src={powerOff} className="Power-off"/>
+                  <img src={powerOff} className="Power-off" onClick={() => signOut_L(dispatch)}/>
                 </div>
 
               </div>
@@ -56,11 +60,5 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    changeUsername: () => dispatch(changeUsername("Mogen")),
-    changeElo: (elo) => dispatch(changeElo(elo))
-  }
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps)(Header);

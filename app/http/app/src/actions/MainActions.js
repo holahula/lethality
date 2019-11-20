@@ -11,10 +11,33 @@ export const MOVED_TO_BOARD = "MOVED_TO_BOARD";
 export const HOVERED_OVER_CARD = "HOVERED_OVER_CARD";
 export const HOVERED_AWAY_FROM_CARD = "HOVERED_AWAY_FROM_CARD";;
 
+export const USER_SIGNED_IN = "USER_SIGNED_IN";
+export const USERNAME_FIELD_CHANGED = "USERNAME_FIELD_CHANGED";
+export const USER_SIGNED_OUT = "USER_SIGNED_OUT";
 
 /*
  * Action creators
  */
+
+ export function signOut() {
+     return {
+        type: USER_SIGNED_OUT,
+     }
+ }
+
+ export function updateUsernameField(username) {
+    return {
+        type: USERNAME_FIELD_CHANGED,
+        username
+    }
+ }
+
+ export function userSignedIn(username) {
+     return {
+         type: USER_SIGNED_IN,
+         username
+     }
+ }
 
  export function hoveredOverCard(card, x, y) {
      return {

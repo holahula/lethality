@@ -5,7 +5,10 @@ import {
     MOVED_TO_BENCH,
     MOVED_TO_BOARD,
     HOVERED_OVER_CARD,
-    HOVERED_AWAY_FROM_CARD
+    HOVERED_AWAY_FROM_CARD,
+    USER_SIGNED_IN,
+    USERNAME_FIELD_CHANGED,
+    USER_SIGNED_OUT
 } from '../actions/MainActions';
 import DataDragon from '../DataDragon';
 
@@ -27,8 +30,9 @@ function cardGenerator(number) {
 }
 
 const initialState = {
-    username: "alxander64",
-    elo: 420,
+    isSignedIn: false,
+    username: "",
+    elo: 1000,
     game_state: {
         "p_health": 20,
         "o_health": 20,
@@ -45,7 +49,11 @@ const initialState = {
         "p_board": cardGenerator(3),
         "o_board": cardGenerator(1),
         "cards_in_hand": cardGenerator(3),
-        "spell_stack": []
+        "spell_stack": [{
+            card_id: '01NX013',
+            uuid: '123',
+            effect_status: [],
+        }]
     },
     hover: {
         card: "",
@@ -55,10 +63,23 @@ const initialState = {
     }
 };
 
-console.log(initialState);
 
 function lethalApp(state = initialState, action) {
     switch(action.type) {
+        case USER_SIGNED_OUT:
+            return Object.assign({}, state, {
+                username: "",
+                isSignedIn: false,
+            });
+        case USERNAME_FIELD_CHANGED:
+            return Object.assign({}, state, {
+                username: action.username,
+            });
+        case USER_SIGNED_IN:
+            return Object.assign({}, state, {
+                username: action.username,
+                isSignedIn: true,
+            });
         case HOVERED_AWAY_FROM_CARD:
             return Object.assign({}, state, {
                 hover: {
