@@ -17,6 +17,7 @@ const cardSchema = (card_id, effect_status) => {
         card: "",
         uuid: "",
         effect_status: [],
+        hp: 4,
     }
 }
 

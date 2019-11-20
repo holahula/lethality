@@ -313,6 +313,10 @@
     margin-left: 20px;  /* compensate for descripton-font margin-left */
 }
 
+.Mana-spell-force-width {
+    width: 90px;
+}
+
 .Mana-value{
     font-family: "Reem Kufi";
     font-size: 36px;

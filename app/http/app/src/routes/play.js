@@ -269,6 +269,28 @@ function renderManaIndicators(mana) {
     return render_obj;
 }
 
+function renderManaSpellIndicators(mana) {
+    let mana_to_arr = [];
+    for (let i=0; i<3; i++){
+        if (i<mana) {
+            // mana indicator will be filled
+            mana_to_arr.push(1);
+        } else {
+            mana_to_arr.push(0);
+        }
+    }
+
+    let render_obj = mana_to_arr.map( (val, index) => {
+        if (val == 1) {
+            return <div key={index} className="Mana-block-filled"></div>;
+        } else {
+            return <div key={index} className="Mana-block-unfilled"></div>;
+        }
+    });
+    
+    return render_obj;
+}
+
 function Play({game_state, dispatch}) {
     let board = game_state.game_state;
     let hover = game_state.hover;
@@ -326,7 +348,7 @@ function Play({game_state, dispatch}) {
                                             <div className="Player-board-overlay"style={draggingOverBoard(snapshot, board)}>
                                                 <span className="Player-board-overlay-text">&uarr; PLAY CARD &uarr;</span>
                                             </div>
-
+                                            
                                             <div className="Player-board-main">
                                                 <span className="Description-font">PLAYER BOARD</span>
                                                 <div className="Board-row" ref={provided.innerRef}>
@@ -379,6 +401,11 @@ function Play({game_state, dispatch}) {
                                 {renderManaIndicators(board.o_mana)}
                             </div>
                             <span className="Description-font">OPPONENT MANA</span>
+                            <div className="Mana-background Mana-spell-force-width">
+                                <span className="Mana-value">{board.o_mana}</span>
+                                {renderManaSpellIndicators(board.o_spell_mana)}
+                            </div>
+                            <span className="Description-font">OPPONENT SPELL MANA</span>
                         </div>
 
                         <div className="Action-button-container">
@@ -390,11 +417,17 @@ function Play({game_state, dispatch}) {
                         </div>
 
                         <div className="Player-mana">
+                        <span className="Description-font">SPELL MANA</span>
+                            <div className="Mana-background Mana-spell-force-width">
+                                    <span className="Mana-value">{board.o_mana}</span>
+                                    {renderManaSpellIndicators(board.p_spell_mana)}
+                                </div>
+                            <span className="Description-font">MANA</span>
                             <div className="Mana-background">
                                 <span className="Mana-value">{board.p_mana}</span>
                                 {renderManaIndicators(board.p_mana)}
                             </div>
-                            <span className="Description-font">MANA</span>
+                            
                         </div>
                     </div>
                 </div>

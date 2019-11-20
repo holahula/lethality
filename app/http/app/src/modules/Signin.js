@@ -16,9 +16,10 @@ function updateUsernameField_L(event, dispatch) {
     dispatch(updateUsernameField(text));
 }
 
-function signIn(username, dispatch) {
-    console.log("Sign in as " + username);
-    dispatch(userSignedIn(username))
+function signIn(username, dispatch, event) {
+    if (event.charCode == null | event.charCode == 13) {
+        dispatch(userSignedIn(username))
+    }
 }
 
 
@@ -32,9 +33,10 @@ function Signin({isSignedIn, username, dispatch}) {
                         <input className="Input-field"
                         placeholder="ENTER A USERNAME"
                         value={username}
+                        onKeyPress={(event) => signIn(username, dispatch, event)}
                         onChange={(event) => updateUsernameField_L(event, dispatch)} />
 
-                        <div className="Input-button" onClick={(event) => {signIn(username, dispatch)}}>
+                        <div className="Input-button" onClick={(event) => {signIn(username, dispatch, event)}}>
                             <span className="Input-button-text">  
                                 &rarr;
                             </span>
