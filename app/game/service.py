@@ -69,6 +69,7 @@ class Service(object):
         if self.check_mana(game, action):
             for card in game["hand"]:
                 if card["uuid"] == action["uuid"]:
+                    # Remove spell mana first, then use normal mana, remove card from hand and put to spell stack
                     card_data = self.get_card_data(card["card_id"])
                     card_data["cost"]=- game["p_spell_mana"]
                     game["p_spell_mana"] = 0
