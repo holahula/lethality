@@ -53,6 +53,14 @@ const initialState = {
             card_id: '01NX013',
             uuid: '123',
             effect_status: [],
+        },{
+            card_id: '01NX013',
+            uuid: '123',
+            effect_status: [],
+        },{
+            card_id: '01NX013',
+            uuid: '123',
+            effect_status: [],
         }]
     },
     hover: {

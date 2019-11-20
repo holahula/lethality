@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import '../App.css';
 import React from 'react';
 
-import logo from '../img/logo.png';
+import logo from '../img/Logo.png';
 import { userSignedIn, updateUsernameField } from '../actions/MainActions';
 
 function checkUserSigendIn (isSignedIn){
