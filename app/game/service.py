@@ -1,3 +1,4 @@
+import requests
 class Service(object):
 
     # 1-to-1 matching with easy endpoints for mogen
@@ -176,3 +177,7 @@ class Service(object):
 
     def level_up(self, game, action):
         pass
+
+    def get_card_data(self, id):
+        r = requests.get("https://storage.googleapis.com/lethality/card_data/" + id + ".json")
+        return r.json()
