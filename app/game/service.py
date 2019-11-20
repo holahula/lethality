@@ -1,3 +1,4 @@
+import requests, json
 class Service(object):
 
     # 1-to-1 matching with easy endpoints for mogen
@@ -50,9 +51,31 @@ class Service(object):
 
     def play_minion(self, game, action):
         # puts minion onto bench array
-        pass
+        if self.check_mana(game, action):
+            for card in game["hand"]:
+                if card["uuid"] == action["uuid"]:
+                    # Get the wanted card_data, use up its mana and move it to the bench
+                    card_data = self.get_card_data(card["card_id"])
+                    game["p_mana"]-=card_data["cost"]
+                    game["p_bench"].append(card)
+                    game['hand'].remove(card)
+        else:
+            pass
+
+                    
 
     def play_spell(self, game, action):
+        # puts spell onto spell stack
+        if self.check_mana(game, action):
+            for card in game["hand"]:
+                if card["uuid"] == action["uuid"]:
+                    # Remove spell mana first, then use normal mana, remove card from hand and put to spell stack
+                    card_data = self.get_card_data(card["card_id"])
+                    card_data["cost"]=- game["p_spell_mana"]
+                    game["p_spell_mana"] = 0
+                    game["p_mana"] -=card_data["cost"]
+                    game["spell_stack"].append(card)
+                    game["hand"].remove(card)
         pass
 
     def choose_attacker(self, game, action):
@@ -156,9 +179,6 @@ class Service(object):
     def ephemeral(self, game, action):
         pass
 
-    def last_breath(self, game, action):
-        pass
-
     def challenger(self, game, action):
         pass
 
@@ -176,3 +196,30 @@ class Service(object):
 
     def level_up(self, game, action):
         pass
+
+    def get_card_data(self, id):
+        #Gets card data, converts to json
+        r = requests.get("https://storage.googleapis.com/lethality/card_data/" + id + ".json")
+        obj = json.loads(r.text)
+        return obj
+    
+    def check_mana(self, game, action):
+        # Checks if you have the mana to play the card, returns boolean
+        card_id = self.find_id(game, action)
+        card_info = self.get_card_data(card_id)
+        card_mana = card_info["cost"]
+        available_mana = game["p_mana"]
+        if card_info["spellSpeed"] is not "":
+            available_mana += game["p_spell_mana"]
+        if card_mana <= available_mana:
+            return True
+        else:
+            return False
+
+    def find_id(self, game, action):
+        # Finds the id of the card given the uuid and area, returns card_id
+        uuid = action["uuid"]
+        area = action["area"]
+        for card in game[area]:
+            if card["uuid"] == uuid:
+                return card["card_id"]
