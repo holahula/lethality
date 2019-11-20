@@ -2,8 +2,10 @@
     "card": {
         "card_id": "",
         "uuid": "",
-        "effect_status": []
+        "effect_status": [],
+        "hp": 1
     },
+
     "game_state": {
         "p_health": 20,
         "o_health": 20,
@@ -26,7 +28,7 @@
     "update_game_state_request": {
         "game_state": {},
         "card_selected": ["card_id", "uuid"],
-        
+
         "action": "",
         "target_object": []
     },
@@ -87,7 +89,7 @@
         "challenger",
         "imbue",
         "fearsome",
-        "cant_block",
+        "cant_block"
     ]
 
 }
