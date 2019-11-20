@@ -1,4 +1,41 @@
 class Service(object):
+
+    # 1-to-1 matching with easy endpoints for mogen
+    # dragged_to_bench
+    # dragged_to_board
+    # action_button_pressed
+    # etc.
+    # things that represent the physical movements and interactions the player just made with a card
+
+    # example game and action which may be given for `dragged_to_board`
+
+    # game:
+    # {
+    #     'p_health': 20,
+    #     'o_health': 20,
+    #     'p_mana': 10,
+    #     'o_mana': 10,
+    #     'p_spell_mana': 3,
+    #     'o_speel_mana': 3,
+    #     'attack_token': True,
+    #     'action_button_text': 'PASS',
+    #     'p_bench': [
+    #         {'uuid': '12345', 'card_id': 'RITO'}
+    #     ],
+    #     'o_bench': [],
+    #     'p_board': [],
+    #     'o_board': [],
+    #     'hand': [],
+    #     'spell_stack': []
+    # }
+
+    # action:
+    # {
+    #     'uuid': '12345',
+    #     'targets': [],
+    #     'area': 'p_bench'
+    # }
+
     def take_action(self, game, action):
         # filter what the action actually is so that we have context
         # call related helper function to do more work
