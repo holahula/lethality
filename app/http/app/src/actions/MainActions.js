@@ -1,4 +1,4 @@
-import Axios from 'axios';
+const Axios = require('axios');
 
 /*
  * Action types
@@ -16,7 +16,7 @@ export const USER_SIGNED_IN = "USER_SIGNED_IN";
 export const USERNAME_FIELD_CHANGED = "USERNAME_FIELD_CHANGED";
 export const USER_SIGNED_OUT = "USER_SIGNED_OUT";
 
-export const API_URL = "http://localhost:8000";
+export const ENDPOINT = "http://localhost:4000/";
 
 /*
  * Action creators
@@ -36,11 +36,32 @@ export const API_URL = "http://localhost:8000";
  }
 
  export function userSignedIn(username) {
-    Axios.post()
-    return {
-         type: USER_SIGNED_IN,
-         username
+    return dispatch => {
+        console.log("sign in request");
+        // get elo and "sign in"
+        Axios.post(ENDPOINT+'user/'+username)
+        .then(login_res => {
+            const username = login_res.data.username;
+            const elo = login_res.data.elo;
+
+            // get a puzzle
+            Axios.get(ENDPOINT+'puzzles/'+elo)
+            .then(puzzle_res => {
+                // parse puzzle
+                const puzzle = puzzle_res.data.puzzle;
+
+                dispatch({
+                    type: USER_SIGNED_IN,
+                    username,
+                    elo,
+                });
+
+            })
+
+        })
+
     }
+    
  }
 
  export function hoveredOverCard(card, x, y) {
@@ -72,6 +93,9 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
     // update board
     board.p_bench = bench;
     board.p_board = new_board;
+
+    // send request
+
 
     // send to reducer
     return {

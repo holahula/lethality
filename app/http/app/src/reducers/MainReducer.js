@@ -86,6 +86,7 @@ function lethalApp(state = initialState, action) {
         case USER_SIGNED_IN:
             return Object.assign({}, state, {
                 username: action.username,
+                elo: action.elo,
                 isSignedIn: true,
             });
         case HOVERED_AWAY_FROM_CARD:
