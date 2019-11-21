@@ -2,6 +2,25 @@ const express = require('express')
 const cors = require('cors');
 const app = express()
 const port = 4000
+const dd =  require('./data_dragon_raw.js');
+const uuidv4 = require('uuid/v4');
+
+class DataDragon {
+    
+    randomCard() {
+        let index = Math.round(Math.random()* dd.length);
+
+        let card = dd[index];
+        
+        return {
+            card_id: card.cardCode,
+            uuid: uuidv4(),
+            effect_status: [],
+            hp: 4,
+        }
+    }
+
+}
 
 app.use(cors());
 
@@ -15,7 +34,7 @@ app.post('/user/:username', (req, res) => {
 });
 
 app.get('/puzzles/:elo', (req, res) => {
-
+    console.log('accepted request for puzzle');
     game_state = {
         "p_health": 20,
         "o_health": 20,
@@ -28,10 +47,10 @@ app.get('/puzzles/:elo', (req, res) => {
         "action_button_text": "GO",
 
         "o_bench": cardGenerator(2),
-        "o_board": cardGenerator(0),
+        "o_board": cardGenerator(3),
         "p_board": cardGenerator(0),
-        "p_bench": cardGenerator(0),
-        "cards_in_hand": cardGenerator(10),
+        "p_bench": cardGenerator(3),
+        "hand": cardGenerator(8),
         "spell_stack": [{
             card_id: '01NX013',
             uuid: '123',
@@ -48,8 +67,9 @@ app.get('/puzzles/:elo', (req, res) => {
     }
 
     res.status(200).send({
-        puzzle: game_state,
+        game: game_state,
     });
+
 });
 
 const cardSchema = (card_id, effect_status) => {
@@ -62,9 +82,10 @@ const cardSchema = (card_id, effect_status) => {
 }
 
 function cardGenerator(number) {
+    let d = new DataDragon();
     let cards = [];
     for (let i=0; i<number; i++){
-        const card = DataDragon.randomCard();
+        const card = d.randomCard();
         cards.push(card);
     }
     return cards;
