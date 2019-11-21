@@ -84,14 +84,19 @@ class Service(object):
                 if card["uuid"] == action["uuid"]:
                     # Remove spell mana first, then use normal mana, remove card from hand and put to spell stack
                     card_data = self.get_card_data(card["card_id"])
-                    card_data["cost"] = - game["p_spell_mana"]
+                    card_data["cost"] -= game["p_spell_mana"]
                     game["p_spell_mana"] = 0
                     game["p_mana"] -= card_data["cost"]
                     game["spell_stack"].append(card)
                     game["hand"].remove(card)
 
     def choose_attacker(self, game, action):
-        pass
+        # puts minion from bench to field
+        if game['attack token']:
+            for card in game['p_bench']:
+                if card['uuid'] == action['uuid']:
+                    game['p_board'].append(card)
+                    game['p_bench'].remove(card)
 
     def attack_phase(self, game, action):
         pass
