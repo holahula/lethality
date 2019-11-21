@@ -7,7 +7,7 @@ class Service:
         self.repo_client = repo_client
 
     def find_all_puzzles(self):
-        puzzles = self.repo_client.find_all()
+        puzzles = self.repo_client.find_all({})
         return [self.dump(puzzle) for puzzle in puzzles]
 
     def find_puzzle(self, puzzle_id):
