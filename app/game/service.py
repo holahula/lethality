@@ -94,6 +94,7 @@ class Service(object):
                     game["p_mana"] -= card_data["cost"]
                     game["spell_stack"].append(card)
                     game["hand"].remove(card)
+                    
 
     def choose_attacker(self, game, action):
         # puts minion from bench to field
@@ -105,10 +106,13 @@ class Service(object):
                     # Adds an empty cell in the enemy board
                     game['o_board'].append(None)
                     # Check if card has challenger
-                    if "Challenger" in self.get_keywords(game, action) and action["targets"] is []:
+                    if "Challenger" in self.get_keywords(game, action) and action["targets"] != []:
                         self.challenger(game, action)
 
     def attack_phase(self, game, action):
+        # AI blocks highest attack minions
+        # Spells get played first
+        # Then attack phase begins
         pass
 
     def pass_turn(self, game, action):
