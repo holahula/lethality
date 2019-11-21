@@ -6,13 +6,13 @@ COLLECTION_NAME = 'USERS'
 class MongoUserRepository(object):
     def __init__(self):
         mongo_url = os.environ.get('MONGO_URL')
-        sefl.db = MongoClient(mongo_url).users
+        self.db = MongoClient(mongo_url).users
     
     def find_all(self, selector):
         return self.db.users.find(selector)
     
     def find(self, selector):
-        return self.db.puzuserszles.find_one(selector)
+        return self.db.users.find_one(selector)
 
     def create(self, puzzle):
         return self.db.users.insert_one(puzzle)
