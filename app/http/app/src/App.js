@@ -17,18 +17,28 @@ import Play from './routes/play';
 import Create from './routes/create';
 import Rankings from './routes/rankings';
 import Signin from './modules/Signin';
+import WinScreen from './modules/WinScreen';
+import useWindowDimensions from './WindowDimensions';
 
-function hideBlurIfSignedIn(isSignedIn){
+function blurIfNeeded(isSignedIn, showWinScreen){
   return {
-    filter: isSignedIn ? "blur(0px)" : "blur(15px)",
+    filter: (!isSignedIn | showWinScreen)  ? "blur(15px)" : "blur(0px)",
   }
 }
 
-function App({isSignedIn}) {
+function App({isSignedIn, showWinScreen}) {
+  const {width, height} = useWindowDimensions();
   return (
     <Router>
       <Signin />
-      <div className="App-body" style={hideBlurIfSignedIn(isSignedIn)}>
+      <WinScreen />
+
+      <div className="App-body"
+      style={{
+        ...blurIfNeeded(isSignedIn, showWinScreen),
+        
+        }}>
+
         <Header />
         <Switch>
           <Route path="/rankings">
@@ -52,6 +62,7 @@ function App({isSignedIn}) {
 const mapStateToProps = state => {
   return {
     isSignedIn: state.isSignedIn,
+    showWinScreen: state.showWinScreen
   }
 }
 

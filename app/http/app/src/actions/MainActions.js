@@ -16,11 +16,14 @@ export const USER_SIGNED_IN = "USER_SIGNED_IN";
 export const USERNAME_FIELD_CHANGED = "USERNAME_FIELD_CHANGED";
 export const USER_SIGNED_OUT = "USER_SIGNED_OUT";
 
+export const GAME_WON = "GAME_WON";
+
 export const ENDPOINT = "http://localhost:4000/";
 
 /*
  * Action creators
  */
+
 
  export function signOut() {
      return {
@@ -43,17 +46,23 @@ export const ENDPOINT = "http://localhost:4000/";
         .then(login_res => {
             const username = login_res.data.username;
             const elo = login_res.data.elo;
-
+            
             // get a puzzle
             Axios.get(ENDPOINT+'puzzles/'+elo)
             .then(puzzle_res => {
                 // parse puzzle
-                const puzzle = puzzle_res.data.puzzle;
+                const game = puzzle_res.data.game;
+                console.log(game);
+
+                // puzzle should be a game state
+                // rename hand to cards_in_hand
+                game.cards_in_hand = game.hand;
 
                 dispatch({
                     type: USER_SIGNED_IN,
                     username,
                     elo,
+                    game
                 });
 
             })
@@ -105,6 +114,11 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
  }
 
  export function cardMovedFromBenchToBoard(board, index_in_bench) {
+     // TODO: REMOVE TEST FOR "win game" condition
+     return {
+         type: GAME_WON
+     }
+
     let player_board = Array.from(board.p_board);
     let bench = Array.from(board.p_bench);
 

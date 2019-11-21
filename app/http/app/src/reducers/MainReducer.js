@@ -8,7 +8,8 @@ import {
     HOVERED_AWAY_FROM_CARD,
     USER_SIGNED_IN,
     USERNAME_FIELD_CHANGED,
-    USER_SIGNED_OUT
+    USER_SIGNED_OUT,
+    GAME_WON
 } from '../actions/MainActions';
 import DataDragon from '../DataDragon';
 
@@ -31,6 +32,7 @@ function cardGenerator(number) {
 }
 
 const initialState = {
+    showWinScreen: false,
     isSignedIn: false,
     username: "",
     elo: 1000,
@@ -75,6 +77,10 @@ const initialState = {
 
 function lethalApp(state = initialState, action) {
     switch(action.type) {
+        case GAME_WON:
+            return Object.assign({}, state, {
+                showWinScreen: true,
+            });
         case USER_SIGNED_OUT:
             return Object.assign({}, state, {
                 ...initialState
@@ -88,6 +94,8 @@ function lethalApp(state = initialState, action) {
                 username: action.username,
                 elo: action.elo,
                 isSignedIn: true,
+                game_state: action.game,
+                showWinScreen: false,
             });
         case HOVERED_AWAY_FROM_CARD:
             return Object.assign({}, state, {

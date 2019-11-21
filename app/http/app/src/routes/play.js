@@ -12,6 +12,7 @@ import {
     hoveredOverCard,
     hoveredAwayFromCard
 } from '../actions/MainActions';
+import useWindowDimensions from '../WindowDimensions';
 
 function onDragEnd (result, board, dispatch) {
     const {source, destination} = result;
@@ -295,7 +296,7 @@ function renderSpells(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
         const url = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '.png';
         return (
-            <img className="One-spell" index={index} src={url}
+            <img key={index} className="One-spell" index={index} src={url}
                 onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
                 onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
                 onMouseLeave={(event) => onMouseExit(event, dispatch)}
@@ -348,17 +349,22 @@ function renderManaSpellIndicators(mana) {
     return render_obj;
 }
 
+function setWindowHeight(window) {
+
+}
+
 function Play({game_state, dispatch}) {
     let board = game_state.game_state;
     let hover = game_state.hover;
     let spells = game_state.game_state.spell_stack;
 
+    const {width, height} = useWindowDimensions();
     return (
             <div className="Game">
                 <img className="Hover-card"
                     src={getHoverCardURL(hover)}
                     style={getHoverCardStyle(hover)}/>
-                <div className="Game-columns">
+                <div className="Game-columns" style={{height: height-70}}>
                     <div className="Health-column">
                         <div className="Opponent-board-health">
                         <span className="Description-font">OPPONENT</span>
