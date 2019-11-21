@@ -76,8 +76,6 @@ class Service(object):
                     game["p_mana"] -= card_data["cost"]
                     game["p_bench"].append(card)
                     game['hand'].remove(card)
-        else:
-            pass
 
     def play_spell(self, game, action):
         # puts spell onto spell stack
@@ -91,7 +89,6 @@ class Service(object):
                     game["p_mana"] -= card_data["cost"]
                     game["spell_stack"].append(card)
                     game["hand"].remove(card)
-        pass
 
     def choose_attacker(self, game, action):
         pass
