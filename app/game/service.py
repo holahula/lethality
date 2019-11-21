@@ -29,6 +29,11 @@ class Service(object):
         for card in game[area]:
             if card["uuid"] == uuid:
                 return card["card_id"]
+    
+    def get_keywords(self, game, action):
+        card_id = self.find_id(game, action)
+        card_info = self.get_card_data(card_id)
+        return card_info["keywords"]
 
     # 1-to-1 matching with easy endpoints for mogen
     # dragged_to_bench
@@ -97,6 +102,11 @@ class Service(object):
                 if card['uuid'] == action['uuid']:
                     game['p_board'].append(card)
                     game['p_bench'].remove(card)
+                    # Adds an empty cell in the enemy board
+                    game['o_board'].append(None)
+                    # Check if card has challenger
+                    if "Challenger" in self.get_keywords(game, action) and action["targets"] is []:
+                        self.challenger(game, action)
 
     def attack_phase(self, game, action):
         pass
@@ -197,7 +207,15 @@ class Service(object):
         pass
 
     def challenger(self, game, action):
-        pass
+        # Find the card I'm challenging, find the index of the challenger
+        target = action["targets"][0]
+        for card in game["o_bench"]:
+            # Move opponent card from bench to board
+            if card["uuid"] == target["uuid"]:
+                index = game["p_bench"].index(card)
+                game["o_board"][index] = card
+                game['o_bench'].remove(card)
+
 
     def imbue(self, game, action):
         pass
