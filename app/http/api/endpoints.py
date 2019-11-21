@@ -7,13 +7,17 @@ from app.puzzle.schema import PuzzleSchema
 
 from app.game.service import Service as Game
 
+from flask_cors import CORS
+
 app = Flask(__name__)
 CORS(app)
 
 # https://www.netlify.com/
 
 # https://developer.okta.com/blog/2018/12/20/crud-app-with-python-flask-react
-
+@app.route("/", methods = ["GET"])
+def entry():
+    return json_response({'yes': 'no'}, 200)
 # Returns the next puzzle based on elo
 @app.route("/puzzles/<int:elo>", methods = ["GET"])
 def next_puzzle(elo):
@@ -39,7 +43,7 @@ def puzzle_functions(puzzle_id):
         puzzle_req = PuzzleSchema().load(json.loads(request.data))
 
         if puzzle_req.errors:
-            return json_response({'error': puzzle_req.error}, 422)
+            return json_response({'error': puzzle_req.errors}, 422)
             
         puzzle = PuzzleService().create_puzzle(puzzle_req)
         return json_response(puzzle)
@@ -48,10 +52,13 @@ def puzzle_functions(puzzle_id):
         puzzle_req = PuzzleSchema().load(json.loads(request.data))
 
         if puzzle_req.errors:
-            return json_response({'error': puzzle_req.error})
+            return json_response({'error': puzzle_req.errorss})
         
         puzzle_service=PuzzleService(g.puzzle_id)
-        if puzzle_service.update_puzzle(elo, puzzle_req)
+        if puzzle_service.update_puzzle(elo, puzzle_req):
+            return json_response(puzzle_service.data)
+        else: 
+            return json_response({'error': 'puzzle not found'}, 404)
 
     else:
         puzzle_service = PuzzleService(g.puzzle_id)
@@ -64,7 +71,7 @@ def puzzle_functions(puzzle_id):
 # Requires: username:string
 # Returns: user: app.idp.user
 @app.route("/user/<string:username>", methods = ["GET", "POST"]) 
-def user(username)
+def user(username):
     if flask.request.method == 'GET':
         user = IdentityService(g.user).find_user(username)
 
@@ -77,12 +84,24 @@ def user(username)
         user_req = IdentitySchema().load(json.loads(request.data))
 
         if user_req.errors:
-            return json_response({'error': user_req.error}, 422)
+            return json_response({'error': user_req.errors}, 422)
             
         user = IdentityService().create_user(user_req)
         return json_response(user)
 
+@app.route("/user/<string:username>/<int:elo>", methods = ["PUT"])
+def update_elo(username, elo):
+    user_req = PuzzleSchema().load(json.loads(request.data))
+    
+    if user_req.errors:
+        return json_response({'error': user_req.errors})
 
+    user_service = IdentityService(g.user)
+    if user_service.update_user(elo, user_req):
+        return json_response(user_service.data)
+    else:
+        return json_response({'error': 'user not found'}, 404)
+    
 # POST:
 # {
 #   game_state
@@ -103,17 +122,17 @@ def user(username)
 #   }
 # }
 
-@app.route("/action/dragged_to_bench", methods = ["POST"])
-def process_move():
+# @app.route("/action/dragged_to_bench", methods = ["POST"])
+# def process_move():
     
-@app.route("/action/enemies_selected", methods = ["POST"])
-@app.route("/action/dragged_to_board", methods = ["POST"])
-@app.route("/action/passed", methods = ["POST"])
+# @app.route("/action/enemies_selected", methods = ["POST"])
+# @app.route("/action/dragged_to_board", methods = ["POST"])
+# @app.route("/action/passed", methods = ["POST"])
 
 
 
-# return: list of users and elo (up to 50)
-@app.route("/leaderboards", methods = ["GET"])
+# # return: list of users and elo (up to 50)
+# @app.route("/leaderboards", methods = ["GET"])
 
 
 # ____                   
