@@ -21,22 +21,29 @@ CORS(app)
 def entry():
     return json_response({'yes': 'no'}, 200)
 # Returns the next puzzle based on elo
+
 @app.route("/puzzles/<int:elo>", methods = ["GET"])
+# ---WORKS---
 def next_puzzle(elo):
     puzzles = PuzzleService().find_all_puzzles()
+
+    if len(puzzles) == 0:
+        return json_response({'error': 'no puzzles found in initial query'}, 404)
+
     closest_elo = min(puzzles, key=lambda x:abs(x['elo']-elo))
     puzzle = PuzzleService().find_puzzle(closest_elo['puzzle_id'])
-    if(puzzle):
+    if puzzle:
         return json_response(puzzle)
     else:
-        return json_response({'error': 'no puzzles found'}, 404)
+        return json_response({'error': 'no puzzles found (closest elo)'}, 404)
 
 @app.route("/puzzle/<int:puzzle_id>", methods = ["GET", "POST", "PUT", "DELETE"])
 def puzzle_functions(puzzle_id):
+    # ---WORKS---
     if request.method == 'GET':
         puzzle = PuzzleService().find_puzzle(puzzle_id)
 
-        if(puzzle):
+        if puzzle:
             return json_response(puzzle)
         else:
             return json_response({'error': 'no puzzles found'}, 404)
@@ -74,15 +81,16 @@ def update_puzzle_elo(puzzle_id, elo):
 # Returns: user: app.idp.user
 @app.route("/user/<string:username>", methods = ["GET", "POST"]) 
 def user(username):
-    if flask.request.method == 'GET':
+    #---WORKS---
+    if request.method == 'GET':
         user = IdentityService().find_user(username)
 
-        if(user):
+        if user:
             return json_response(user)
         else:
             return json_response({'error': 'user not found'}, 404)
     
-    elif flask.request.method == 'POST':
+    elif request.method == 'POST':
         user_req = IdentitySchema().load(json.loads(request.data))
 
         if user_req.errors:

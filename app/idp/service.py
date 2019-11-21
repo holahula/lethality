@@ -7,12 +7,13 @@ class Service:
         self.repo_client = repo_client
 
     def find_all_users(self):
-        users = self.repo_client.find_all()
+        users = self.repo_client.find_all({})
+        return [self.dump(user) for user in users]
 
     def find_user(self, user_id):
         user = self.repo_client.find({'user_id': user_id})
         return self.dump(user)
-
+#fix
     def create_user(self):
         self.repo_client.create(self.prepare_user("1500"))
         return self.dump(elo)
@@ -26,7 +27,7 @@ class Service:
         return records_affected > 0
 
     def dump(self, data):
-        return UserSchema().dump(data).data
+        return IdentitySchema().dump(data)
     
     def prepare_user(self, user_id, elo):
         data['user'] = user_id
