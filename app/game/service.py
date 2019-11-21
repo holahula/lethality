@@ -3,9 +3,9 @@ import json
 
 class Service(object):
 
-    def get_card_data(self, id):
+    def get_card_data(self, card_id):
         # Gets card data, converts to json
-        r = requests.get("https://storage.googleapis.com/lethality/card_data/" + id + ".json")
+        r = requests.get(f"https://storage.googleapis.com/lethality/card_data/{card_id}.json")
         obj = json.loads(r.text)
         return obj
 
