@@ -15,7 +15,7 @@ class Service(object):
         card_info = self.get_card_data(card_id)
         card_mana = card_info["cost"]
         available_mana = game["p_mana"]
-        if card_info["spellSpeed"] is not "":
+        if card_info["spellSpeed"] != "":
             available_mana += game["p_spell_mana"]
         if card_mana <= available_mana:
             return True
