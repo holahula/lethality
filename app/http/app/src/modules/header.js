@@ -7,9 +7,9 @@ import { signOut } from '../actions/MainActions';
 
 import '../App.css';
 import React from 'react';
-import logo from '../img/Logo.png';
-import powerOff from '../img/power-off.png';
-import profileTeemo from '../img/profile_teemo.png';
+import logo from './../img/logo.png';
+import powerOff from './../img/power-off.png';
+import profileTeemo from './../img/profile_teemo.png';
 
 function signOut_L(dispatch) {
   dispatch(signOut());
