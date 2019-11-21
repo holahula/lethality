@@ -108,6 +108,17 @@ class Service(object):
                     # Check if card has challenger
                     if "Challenger" in self.get_keywords(game, action) and action["targets"] != []:
                         self.challenger(game, action)
+    
+    def unselect_attacker(self, game, action):
+        # puts minion from field to bench
+        for card in game['p_board']:
+            if card['uuid'] == action['uuid']:
+                # Remove the opposing cell in the enemy board
+                opposing_index = game['p_board'].index(card)
+                game['o_board'].pop(opposing_index)
+                # Transfer action card from board to bench
+                game['p_board'].remove(card)
+                game['p_bench'].append(card)
 
     def attack_phase(self, game, action):
         # AI blocks highest attack minions
