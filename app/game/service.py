@@ -3,6 +3,33 @@ import json
 
 class Service(object):
 
+    def get_card_data(self, id):
+        # Gets card data, converts to json
+        r = requests.get("https://storage.googleapis.com/lethality/card_data/" + id + ".json")
+        obj = json.loads(r.text)
+        return obj
+
+    def check_mana(self, game, action):
+        # Checks if you have the mana to play the card, returns boolean
+        card_id = self.find_id(game, action)
+        card_info = self.get_card_data(card_id)
+        card_mana = card_info["cost"]
+        available_mana = game["p_mana"]
+        if card_info["spellSpeed"] is not "":
+            available_mana += game["p_spell_mana"]
+        if card_mana <= available_mana:
+            return True
+        else:
+            return False
+
+    def find_id(self, game, action):
+        # Finds the id of the card given the uuid and area, returns card_id
+        uuid = action["uuid"]
+        area = action["area"]
+        for card in game[area]:
+            if card["uuid"] == uuid:
+                return card["card_id"]
+
     # 1-to-1 matching with easy endpoints for mogen
     # dragged_to_bench
     # dragged_to_board
@@ -38,18 +65,6 @@ class Service(object):
     #     'targets': [],
     #     'area': 'p_bench'
     # }
-
-    def take_action(self, game, action):
-        # filter what the action actually is so that we have context
-        # call related helper function to do more work
-
-        # context we want to look for:
-        # 1. the phase of the game
-        # 2. types of cards involved in action (spell, summon, attack, etc.)
-        pass
-
-    # once a gerenal type is associated with the action, we can break it down even further
-    # helper functions will split into other helper functions, etc.
 
     def play_minion(self, game, action):
         # puts minion onto bench array
@@ -196,30 +211,3 @@ class Service(object):
 
     def level_up(self, game, action):
         pass
-
-    def get_card_data(self, id):
-        # Gets card data, converts to json
-        r = requests.get("https://storage.googleapis.com/lethality/card_data/" + id + ".json")
-        obj = json.loads(r.text)
-        return obj
-
-    def check_mana(self, game, action):
-        # Checks if you have the mana to play the card, returns boolean
-        card_id = self.find_id(game, action)
-        card_info = self.get_card_data(card_id)
-        card_mana = card_info["cost"]
-        available_mana = game["p_mana"]
-        if card_info["spellSpeed"] is not "":
-            available_mana += game["p_spell_mana"]
-        if card_mana <= available_mana:
-            return True
-        else:
-            return False
-
-    def find_id(self, game, action):
-        # Finds the id of the card given the uuid and area, returns card_id
-        uuid = action["uuid"]
-        area = action["area"]
-        for card in game[area]:
-            if card["uuid"] == uuid:
-                return card["card_id"]
