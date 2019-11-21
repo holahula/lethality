@@ -18,7 +18,7 @@ export const USER_SIGNED_OUT = "USER_SIGNED_OUT";
 
 export const GAME_WON = "GAME_WON";
 
-export const ENDPOINT = "http://localhost:4000/";
+export const ENDPOINT = "http://localhost:4433/";
 
 /*
  * Action creators
