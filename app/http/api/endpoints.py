@@ -29,17 +29,17 @@ def next_puzzle(elo):
     else:
         return json_response({'error': 'no puzzles found'}, 404)
 
-@app.route("/puzzle/<int:id>", methods = ["GET", "POST", "PUT", "DELETE"])
+@app.route("/puzzle/<int:puzzle_id>", methods = ["GET", "POST", "PUT", "DELETE"])
 def puzzle_functions(puzzle_id):
-    if flask.request.method == 'GET':
-        puzzle = PuzzleService(g.puzzle_id).find_puzzle()
+    if request.method == 'GET':
+        puzzle = PuzzleService().find_puzzle(puzzle_id)
 
         if(puzzle):
             return json_response(puzzle)
         else:
             return json_response({'error': 'no puzzles found'}, 404)
 
-    elif flask.request.method == 'POST':
+    elif request.method == 'POST':
         puzzle_req = PuzzleSchema().load(json.loads(request.data))
 
         if puzzle_req.errors:
@@ -48,32 +48,32 @@ def puzzle_functions(puzzle_id):
         puzzle = PuzzleService().create_puzzle(puzzle_req)
         return json_response(puzzle)
 
-    elif flask.request.method == 'PUT':
-        puzzle_req = PuzzleSchema().load(json.loads(request.data))
-
-        if puzzle_req.errors:
-            return json_response({'error': puzzle_req.errorss})
-        
-        puzzle_service=PuzzleService(g.puzzle_id)
-        if puzzle_service.update_puzzle(elo, puzzle_req):
-            return json_response(puzzle_service.data)
-        else: 
-            return json_response({'error': 'puzzle not found'}, 404)
-
-    else:
+    elif request.method == 'DELETE':
         puzzle_service = PuzzleService(g.puzzle_id)
         if puzzle_service.delete_puzzle():
             return json_response({})
         else:
             return json_response({'error': 'puzzle not found'}, 404)
 
+@app.route("/puzzle/<int:puzzle_id>/<int:elo>", methods = ["PUT"])
+def update_puzzle_elo(puzzle_id, elo):
+    puzzle_req = PuzzleSchema().load(json.loads(request.data))
+
+    if puzzle_req.errors:
+        return json_response({'error': puzzle_req.errorss})
+    
+    puzzle_service=PuzzleService()
+    if puzzle_service.update_puzzle(elo, puzzle_req):
+        return json_response(puzzle_service.data)
+    else: 
+        return json_response({'error': 'puzzle not found'}, 404)
 
 # Requires: username:string
 # Returns: user: app.idp.user
 @app.route("/user/<string:username>", methods = ["GET", "POST"]) 
 def user(username):
     if flask.request.method == 'GET':
-        user = IdentityService(g.user).find_user(username)
+        user = IdentityService().find_user(username)
 
         if(user):
             return json_response(user)
@@ -96,7 +96,7 @@ def update_elo(username, elo):
     if user_req.errors:
         return json_response({'error': user_req.errors})
 
-    user_service = IdentityService(g.user)
+    user_service = IdentityService()
     if user_service.update_user(elo, user_req):
         return json_response(user_service.data)
     else:
