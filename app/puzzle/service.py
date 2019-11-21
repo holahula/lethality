@@ -5,7 +5,7 @@ from .schema import PuzzleSchema
 class Service:
     def __init__(self, repo_client=Repository(adapter=MongoPuzzleRepository)):
         self.repo_client = repo_client
-        
+
     def find_all_puzzles(self):
         puzzles = self.repo_client.find_all()
         return [self.dump(puzzle) for puzzle in puzzles]
@@ -27,7 +27,8 @@ class Service:
         return records_affected > 0
     
     def dump(self, data):
-        return PuzzleSchema(exclude=['_puzzle_id']).dump(data).data
+        # return PuzzleSchema(exclude=['_puzzle_id']).dump(data).data
+        return PuzzleSchema().dump(data)
 
     def prepare_puzzle(self, game_state):
         data = game_state.data

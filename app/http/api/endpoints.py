@@ -23,7 +23,7 @@ def entry():
 def next_puzzle(elo):
     puzzles = PuzzleService().find_all_puzzles()
     closest_elo = min(puzzles, key=lambda x:abs(x['elo']-elo))
-    puzzle = PuzzleService(closest_elo['puzzle_id']).find_puzzle()
+    puzzle = PuzzleService().find_puzzle(closest_elo['puzzle_id'])
     if(puzzle):
         return json_response(puzzle)
     else:
