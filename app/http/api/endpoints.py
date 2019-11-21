@@ -1,4 +1,4 @@
-#FLASK_APP=$PWD/app/http/api/endpoints.py FLASK_ENV=development python -m flask run --port=4433
+#FLASK_APP=$PWD/app/http/api/endpoints.py FLASK_ENV=development python3 -m flask run --port=4433
 
 from flask import Flask, json, g, request
 from app.idp.service import Service as IdentityService
