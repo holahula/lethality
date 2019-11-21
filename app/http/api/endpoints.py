@@ -51,7 +51,8 @@ def puzzle_functions(puzzle_id):
             return json_response({'error': puzzle_req.error})
         
         puzzle_service=PuzzleService(g.puzzle_id)
-        if puzzle_service.update_puzzle(elo, puzzle_req)
+        if puzzle_service.update_puzzle(elo, puzzle_req):
+            pass
 
     else:
         puzzle_service = PuzzleService(g.puzzle_id)

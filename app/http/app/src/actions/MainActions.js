@@ -1,3 +1,4 @@
+import Axios from 'axios';
 
 /*
  * Action types
@@ -14,6 +15,8 @@ export const HOVERED_AWAY_FROM_CARD = "HOVERED_AWAY_FROM_CARD";;
 export const USER_SIGNED_IN = "USER_SIGNED_IN";
 export const USERNAME_FIELD_CHANGED = "USERNAME_FIELD_CHANGED";
 export const USER_SIGNED_OUT = "USER_SIGNED_OUT";
+
+export const API_URL = "http://localhost:8000";
 
 /*
  * Action creators
@@ -33,10 +36,11 @@ export const USER_SIGNED_OUT = "USER_SIGNED_OUT";
  }
 
  export function userSignedIn(username) {
-     return {
+    Axios.post()
+    return {
          type: USER_SIGNED_IN,
          username
-     }
+    }
  }
 
  export function hoveredOverCard(card, x, y) {

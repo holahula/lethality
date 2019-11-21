@@ -37,19 +37,19 @@ const initialState = {
     game_state: {
         "p_health": 20,
         "o_health": 20,
-        "p_mana": 3,
-        "o_mana": 0,
-        "p_spell_mana": 0,
-        "o_spell_mana": 0,
+        "p_mana": 1,
+        "o_mana": 1,
+        "p_spell_mana": 2,
+        "o_spell_mana": 2,
         "attack_token": true,
 
         "action_button_text": "GO",
 
-        "p_bench": cardGenerator(2),
         "o_bench": cardGenerator(2),
-        "p_board": cardGenerator(3),
-        "o_board": cardGenerator(1),
-        "cards_in_hand": cardGenerator(3),
+        "o_board": cardGenerator(0),
+        "p_board": cardGenerator(0),
+        "p_bench": cardGenerator(0),
+        "cards_in_hand": cardGenerator(10),
         "spell_stack": [{
             card_id: '01NX013',
             uuid: '123',
@@ -77,8 +77,7 @@ function lethalApp(state = initialState, action) {
     switch(action.type) {
         case USER_SIGNED_OUT:
             return Object.assign({}, state, {
-                username: "",
-                isSignedIn: false,
+                ...initialState
             });
         case USERNAME_FIELD_CHANGED:
             return Object.assign({}, state, {

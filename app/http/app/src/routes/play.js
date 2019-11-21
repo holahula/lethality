@@ -113,6 +113,48 @@ function draggingOverBoard(snapshot, board) {
     }
 }
 
+
+
+function renderPlayerBench(cards, dispatch) {
+    let render_obj = cards.map( (card, index) => {
+        // let cardImage = require('../img/cards/' + card.card_id + '.png');
+        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
+        return (
+            <Draggable key={card.uuid} index={index} draggableId={card.uuid}>
+                {(provided, snapshot) => (
+                    <div>
+                     <img
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+
+                        key={index}
+                        index={index}
+                        src={cardImage}
+                        className="Bench-card"
+
+                        style={provided.draggableProps.style}
+
+                        onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
+                        onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
+                        onMouseLeave={(event) => onMouseExit(event, dispatch)}
+
+                        style={{...provided.draggableProps.style,
+                            ...updateCardSize(snapshot)
+                        }}
+                     />
+                    </div>
+                )}
+               
+            </Draggable>
+        );
+    });
+
+    if (render_obj == null) { return emptyDraggable() }
+    return render_obj;
+}
+
+
 function renderPlayerHand(board, dispatch) {
     let cards = board.cards_in_hand
     let render_obj = cards.map( (card, index) => {
@@ -130,11 +172,13 @@ function renderPlayerHand(board, dispatch) {
                         src={cardImage}
                         className="Deck-card"
 
-                        style={provided.draggableProps.style}
-
                         onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
                         onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
                         onMouseLeave={(event) => onMouseExit(event, dispatch)}
+
+                        style={{...provided.draggableProps.style,
+                            ...updateCardSize(snapshot)
+                        }}
 
                         />
                 )}
@@ -145,46 +189,39 @@ function renderPlayerHand(board, dispatch) {
     return render_obj;
 }
 
-
-function renderPlayerBench(cards, dispatch) {
-    let render_obj = cards.map( (card, index) => {
-        // let cardImage = require('../img/cards/' + card.card_id + '.png');
-        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
-        return (
-            <Draggable key={card.uuid} index={index} draggableId={card.uuid}>
-                {(provided, snapshot) => (
-                     <img
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-
-                        key={index}
-                        index={index}
-                        src={cardImage}
-                        className="Bench-card"
-
-                        style={provided.draggableProps.style}
-
-                        onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
-                        onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
-                        onMouseLeave={(event) => onMouseExit(event, dispatch)}
-                     />
-                    
-                )}
-               
-            </Draggable>
-        );
-    });
-    return render_obj;
+function updateCardSize(snapshot) {
+    switch(snapshot.draggingOver) {
+        case "bench":
+            return {
+                height: "105px",
+                width: "auto",
+            }
+        case "board":
+            return {
+                height: "140px",
+                width: "auto"
+            }
+        default:
+            return {}
+    }
 }
 
 function renderPlayerBoard(cards, dispatch) {
+
+    const showHealthIndicator = (snapshot) => {
+        // hide health indicator on card when dragging
+        return {
+            opacity: snapshot.isDragging ? "0" : "100",
+            display: snapshot.isDragging ? "none" : "flex"
+        }
+    }
     let render_obj = cards.map( (card, index) => {
         // let cardImage = require('../img/cards/' + card.card_id + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
         return (
             <Draggable key={card.uuid} index={index} draggableId={card.uuid}>
                 {(provided, snapshot) => (
+                    <div>
                     <img
                         ref={provided.innerRef}
                         {...provided.draggableProps}
@@ -194,17 +231,36 @@ function renderPlayerBoard(cards, dispatch) {
                         key={index}
                         src={cardImage}
                         className="Board-card"
-                        style={provided.draggableProps.style}
+
+                        style={{...provided.draggableProps.style,
+                            ...updateCardSize(snapshot)
+                        }}
 
                         onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
                         onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
                         onMouseLeave={(event) => onMouseExit(event, dispatch)}
                     />
+                    <div className="Board-card-health"
+                    onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
+                    onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
+                    onMouseLeave={(event) => onMouseExit(event, dispatch)}
+                    style={ showHealthIndicator(snapshot) }
+                    >
+                        <span className="Board-card-health-text">{card.hp}</span>
+                    </div>
+                    </div>
                 )}
             </Draggable>
         );
     });
     return render_obj;
+}
+
+function emptyDraggable() {
+    return (
+        <Draggable key="0" index="0" draggableId="0" style={{height: "100px", width: "50px"}}>
+        </Draggable>
+    );
 }
 
 
@@ -213,6 +269,7 @@ function renderOpponentBench(cards, dispatch) {
         //let cardImage = require('../img/cards/' + card.card_id + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
         return <img index={index} src={cardImage} className="Bench-card No-grab"
+            key={index}
             onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
             onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
             onMouseLeave={(event) => onMouseExit(event, dispatch)}
@@ -345,6 +402,7 @@ function Play({game_state, dispatch}) {
                                 <Droppable droppableId="board" direction="horizontal">
                                     {(provided, snapshot) => (
                                         <div className="Player-board">
+
                                             <div className="Player-board-overlay"style={draggingOverBoard(snapshot, board)}>
                                                 <span className="Player-board-overlay-text">&uarr; PLAY CARD &uarr;</span>
                                             </div>
@@ -353,6 +411,10 @@ function Play({game_state, dispatch}) {
                                                 <span className="Description-font">PLAYER BOARD</span>
                                                 <div className="Board-row" ref={provided.innerRef}>
                                                     {renderPlayerBoard(board.p_board, dispatch)}
+                                                    <div style={{opacity: "0%"}}>
+                                                    {provided.placeholder}
+                                                    </div>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -368,6 +430,9 @@ function Play({game_state, dispatch}) {
                                             <span className="Description-font">PLAYER BENCH</span>
                                             <div className="Bench-row"  ref={provided.innerRef} {...provided.droppableProps}>
                                                 {renderPlayerBench(board.p_bench, dispatch)}
+                                                <div style={{opacity: "0%"}}>
+                                                    {provided.placeholder}
+                                                    </div>
                                             </div>
                                         </div>
                                     )}
@@ -377,7 +442,9 @@ function Play({game_state, dispatch}) {
                                     {(provided, snapshot) => (
                                         <div className="Deck" ref={provided.innerRef} {...provided.droppableProps}>
                                             {renderPlayerHand(board, dispatch)}
-                                            {provided.placeholder}
+                                            <div style={{opacity: "0%"}}>
+                                                    {provided.placeholder}
+                                                    </div>
                                         </div>
                                     )}
                                     
@@ -402,7 +469,7 @@ function Play({game_state, dispatch}) {
                             </div>
                             <span className="Description-font">OPPONENT MANA</span>
                             <div className="Mana-background Mana-spell-force-width">
-                                <span className="Mana-value">{board.o_mana}</span>
+                                <span className="Mana-value">{board.o_spell_mana}</span>
                                 {renderManaSpellIndicators(board.o_spell_mana)}
                             </div>
                             <span className="Description-font">OPPONENT SPELL MANA</span>
@@ -419,7 +486,7 @@ function Play({game_state, dispatch}) {
                         <div className="Player-mana">
                         <span className="Description-font">SPELL MANA</span>
                             <div className="Mana-background Mana-spell-force-width">
-                                    <span className="Mana-value">{board.o_mana}</span>
+                                    <span className="Mana-value">{board.p_spell_mana}</span>
                                     {renderManaSpellIndicators(board.p_spell_mana)}
                                 </div>
                             <span className="Description-font">MANA</span>
