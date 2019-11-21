@@ -12,7 +12,7 @@ class Service:
     def find_user(self, user_id):
         user = self.repo_client.find({'user_id': user_id})
         return self.dump(user)
-
+#fix
     def create_user(self):
         self.repo_client.create(self.prepare_user("1500"))
         return self.dump(elo)

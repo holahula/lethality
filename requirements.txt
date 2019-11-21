@@ -1,0 +1,4 @@
+marshmallow
+pymongo
+flask
+flask-cors 

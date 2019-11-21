@@ -19,6 +19,7 @@ CORS(app)
 def entry():
     return json_response({'yes': 'no'}, 200)
 # Returns the next puzzle based on elo
+
 @app.route("/puzzles/<int:elo>", methods = ["GET"])
 def next_puzzle(elo):
     puzzles = PuzzleService().find_all_puzzles()
