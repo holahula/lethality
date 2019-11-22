@@ -90,8 +90,12 @@ function hoverOverCard(data, card, dispatch) {
 }
 
 function getHoverCardURL(hover) {
-    if (!hover.card.cardCode) { return; }
-    const imgURL = "https://storage.googleapis.com/lethality/cards/" + hover.card.cardCode + '-COMPRESSED.png';
+    var imgURL;
+    if (!hover.card.cardCode) { 
+        imgURL = "https://storage.googleapis.com/lethality/cards/" + hover.card + '-COMPRESSED.png';
+    } else {
+        imgURL = "https://storage.googleapis.com/lethality/cards/" + hover.card.cardCode + '-COMPRESSED.png';
+    }
     return imgURL;
 }
 function getHoverCardStyle(hover) {
@@ -167,6 +171,8 @@ function renderPlayerBench(cards, dispatch) {
                         onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
                         onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
                         onMouseLeave={(event) => onMouseExit(event, dispatch)}
+
+                        style={{cursor: 'default'}}
                      />
                     </div>
                 )
@@ -259,6 +265,7 @@ function renderPlayerBoard(cards, dispatch) {
                         key={index}
                         src={cardImage}
                         className="Board-card"
+                        style={{cursor: 'default'}}
 
                         onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
                         onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
@@ -299,16 +306,26 @@ function renderOpponentBench(cards, dispatch) {
     });
     return render_obj;
 }
-
 function renderOpponentBoard(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
         //let cardImage = require('../img/cards/' + card.cardCode + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
-        return <img key={index} index={index} src={cardImage} className="Board-card No-grab"
+        return (
+        <div><img index={index} src={cardImage} className="Board-card No-grab"
             onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
             onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
             onMouseLeave={(event) => onMouseExit(event, dispatch)}
-        />;
+        />
+        <div className="Board-card-health"
+                    onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
+                    onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
+                    onMouseLeave={(event) => onMouseExit(event, dispatch)}
+                    >
+                        <span className="Board-card-health-text">{card.health}</span>
+                    </div>
+
+        </div>
+        );
     });
     return render_obj;
 }
@@ -386,6 +403,10 @@ function renderLibraryCards(cards, dispatch) {
                         style={{...provided.draggableProps.style,
                             ...updateCardSize(snapshot)
                         }}
+
+                        onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
+                        onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
+                        onMouseLeave={(event) => onMouseExit(event, dispatch)}
                     />
                 )}
             </Draggable>

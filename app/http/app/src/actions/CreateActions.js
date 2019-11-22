@@ -61,6 +61,7 @@ export function create_cardAdded(destination, card_id, board) {
 
         let new_card = {... Cards[card_id]};
         new_card.uuid = uuid();
+        
         // get card data
         // add card to board
             var new_bench;
