@@ -11,26 +11,29 @@ class Service:
         return [self.dump(user) for user in users]
 
     def find_user(self, user_id):
+        # user = self.repo_client.find({'user_id': user_req["user_id"]})
         user = self.repo_client.find({'user_id': user_id})
+        
         return self.dump(user)
 #fix
-    def create_user(self):
-        self.repo_client.create(self.prepare_user("1500"))
-        return self.dump(elo)
+    def create_user(self, user_req):
+        user = self.repo_client.create(self.prepare_user(user_req))
+        return self.dump(user)
 
-    def update_user(self, elo):
-        records_affected = self.repo.update({'user_id': user_id}, self.prepare_user(user_id, elo))
+    def update_user(self, user_req):
+        records_affected = self.repo_client.update({"user_id": user_req["user_id"]}, self.prepare_user(user_req))
         return records_affected > 0
 
-    def delete_user(self):
-        records_affected = self.repo_client.delete({'user_id': user_id})
+    def delete_user(self, user_id):
+        records_affected = self.repo_client.delete({"user_id": user_id})
         return records_affected > 0
 
     def dump(self, data):
         return IdentitySchema().dump(data)
     
-    def prepare_user(self, user_id, elo):
-        data['user'] = user_id
-        data['elo'] = elo
-        return user
+    def prepare_user(self, user_req):
+        data = {}
+        data["user_id"] = user_req["user_id"]
+        data["elo"] = user_req["elo"]
+        return data
     
