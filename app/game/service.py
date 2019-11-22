@@ -4,12 +4,6 @@ import itertools
 
 class Service(object):
 
-    def get_card_data(self, cardCode):
-        # Gets card data, converts to json
-        r = requests.get(f"https://storage.googleapis.com/lethality/card_data/{cardCode}.json")
-        obj = json.loads(r.text)
-        return obj
-
     def check_mana(self, game, action):
         # Checks if you have the mana to play the card, returns boolean
         card_info = self.find_id(game, action)
@@ -29,11 +23,11 @@ class Service(object):
         for card in game[area]:
             if card["uuid"] == uuid:
                 return card
-    
+
     def get_keywords(self, game, action):
         card_info = self.find_id(game, action)
         return card_info["keywords"]
-    
+
     def block_AI(self, game, action):
         # Create a board with all possible defenders' health and board with all possible attacker's attack
         fake_board = []
@@ -132,7 +126,7 @@ class Service(object):
             game["p_mana"] -= card_data["cost_delta"]
             game["spell_stack"].append(card_data)
             game["hand"].remove(card_data)
-                    
+
 
     def choose_attacker(self, game, action):
         # puts minion from bench to field
@@ -146,7 +140,7 @@ class Service(object):
                     # Check if card has challenger
                     if "Challenger" in self.get_keywords(game, action) and action["targets"] != []:
                         self.challenger(game, action)
-    
+
     def unselect_attacker(self, game, action):
         # puts minion from field to bench
         for card in game['p_board']:
@@ -157,7 +151,7 @@ class Service(object):
                 # Transfer action card from board to bench
                 game['p_board'].remove(card)
                 game['p_bench'].append(card)
-    
+
     def find_opposing_card(self, game, action):
         # Finds opposing card during battle phase
         area = action['area']
@@ -197,7 +191,9 @@ class Service(object):
 
     def direct_hit(self, game, action):
         # When an attacking minion attacks nexus
-        pass
+        card = self.find_id(game, action)
+        dmg = card['attack'] + card['attack_delta']
+        game['o_health'] -= dmg
 
     def battlecry(self, game, action):
         pass
