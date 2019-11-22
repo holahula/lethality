@@ -14,6 +14,8 @@ from marshmallow import ValidationError
 app = Flask(__name__)
 CORS(app)
 
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 # https://www.netlify.com/
 
 # https://developer.okta.com/blog/2018/12/20/crud-app-with-python-flask-react
@@ -109,33 +111,6 @@ def user_functions():
         else:
             return json_response({"error": "user not found"}, 404)
             
-@app.route("/user/<string:user_id>", methods = ["GET", "POST"]) 
-def user(user_id):
-    if request.method == "GET":
-        # try:
-        #     user_req = PuzzleSchema().load(json.loads(request.data))
-        # except ValidationError as error:
-        #     return json_response({"error": error})
-
-        user = IdentityService().find_user(user_id)
-    
-        if user:
-            return json_response(user)
-        else:
-            return json_response({"error": "user not found"}, 404)
-    
-    elif request.method == "POST":
-        user = IdentityService().create_user(user_id)
-        return json_response(user)
-
-@app.route("/user/<string:user_id>/<int:elo>", methods = ["PUT"])
-def update_elo(user_id, elo):
-    user_service = IdentityService()
-    if user_service.update_user(user_id, elo):
-        return json_response({"success": "user updated"}, 200)
-    else:
-        return json_response({"error": "user not found"}, 404)
-    
 # POST:
 # {
 #   game_state
