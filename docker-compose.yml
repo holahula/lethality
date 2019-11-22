@@ -1,13 +1,48 @@
 version: '3'
+
+networks:
+  net:
+
 services:
   mongo:
     image: mongo
     restart: always
     ports:
-     - "27017:27017"
+      - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_ROOT_USERNAME: mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: mongo_secret
+    networks:
+      - net
+  lethality-be:
+    build:
+      context: .
+    image: lethality-be
+    restart: always
+    ports:
+      - "4433:4433"
+    environment: 
+      HOST: localhost
+      DATABASE_USERNAME: mongo_user
+      DATABASE_PASSWORD: mongo_secret
+      MONGO_URL: mongodb://mongo_user:mongo_secret@mongo:27017
+    networks: 
+      - net
+    depends_on: 
+      - mongo
+  lethality-fe:
+    build:
+      context: app/http/app
+    image: lethality-fe
+    restart: always
+    ports:
+      - "80:80"
+      - "3000:3000"
+    networks:
+      - net
+    depends_on:
+      - lethality-be
 
+    
 # export MONGO_URL=mongodb://admin:admin@0.0.0.0:27017
 #FLASK_APP=$PWD/app/http/api/endpoints.py FLASK_ENV=development python3 -m flask run --port=4433
