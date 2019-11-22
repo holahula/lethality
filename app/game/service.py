@@ -171,7 +171,7 @@ class Service(object):
         # Finds opposing card during battle phase
         area = action['area']
         for card in game[area]:
-            if game['uuid'] == action['uuid']:
+            if card['uuid'] == action['uuid']:
                 index = game[area].index(card)
                 if area == 'p_board':
                     return game['o_board'][index]
@@ -299,69 +299,3 @@ class Service(object):
 
     def cant_block(self, game, action):
         pass
-a = Service()
-game = {
-     'p_health': 20,
-     'o_health': 20,
-     'p_mana': 10,
-     'o_mana': 10,
-     'p_spell_mana': 3,
-     'o_spell_mana': 3,
-     'attack_token': True,
-     'action_button_text': 'PASS',
-     'p_bench': [],
-     'o_bench': [],
-     'p_board': [],
-     'o_board': [],
-     'hand': [  {
-    "associatedCards": [],
-    "associatedCardRefs": [],
-    "assets": [
-      {
-        "gameAbsolutePath": "http://dd.b.pvp.net/Set1/en_us/img/cards/01PZ020.png",
-        "fullAbsolutePath": "http://dd.b.pvp.net/Set1/en_us/img/cards/01PZ020-full.png"
-      }
-    ],
-    "region": "Piltover & Zaun",
-    "regionRef": "PiltoverZaun",
-    "attack": 1,
-    "attack_delta": 0,
-    "cost": 1,
-    'cost_delta': 0,
-    "health": 1,
-    'health_delta': 0,
-    "description": "",
-    "descriptionRaw": "",
-    "levelupDescription": "",
-    "levelupDescriptionRaw": "",
-    "flavorText": "Her first launch was pure accident: she slipped inside a Progress Day cannon while preening herself. Now she's the toast of Piltover, arcing across the sky to the adoring gasps of the crowds below.",
-    "artistName": "SIXMOREVODKA",
-    "name": "Daring Poro",
-    "cardCode": "01PZ020",
-    'uuid': "12345",
-    "keywords": [
-      "Elusive"
-    ],
-    "keywordRefs": [
-      "Elusive"
-    ],
-    "spellSpeed": "",
-    "spellSpeedRef": "",
-    "rarity": "Common",
-    "rarityRef": "Common",
-    "subtype": "Poro",
-    "supertype": "",
-    "type": "Unit",
-    "collectible": True
-  }],
-     'spell_stack': []
- }
-
-action = {'uuid': "12345", 'targets': [], 'area': 'hand'}
-action2 = {'uuid': "12345", 'targets': [], 'area': 'p_bench'}
-action3 = {'uuid': "12345", 'targets': [], 'area': 'p_board'}
-
-a.play_minion(game, action)
-a.choose_attacker(game, action2)
-a.attack_phase(game, action)
-print(game['p_bench'])
