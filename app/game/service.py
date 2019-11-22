@@ -71,14 +71,6 @@ class Service(object):
                 index = combinations.index(defender)
                 attacker = attack_board[index]
                 damage = attacker['attack'] + attacker['attack_delta']
-                defender_attack = defender['attack'] + defender['attack_delta']
-                # We invalidate the scenarios where the defense wouldn't work because of attacker keywords
-                # Really Scuffed, but if attacker is elusive and defender is not elusive, add alot to current damage
-                if 'Elusive' in attacker['keywords'] and 'Elusive' not in defender['keywords']:
-                    current_damage = float('Inf')
-                # Also super scuffed, but if attacker is fearsome and defender has less than 3 attack, add alot to current damage
-                elif 'Fearsome' in attacker['keywords'] and defender_attack < 3:
-                    current_damage = float('Inf')
                 # This means there's no defenders, so attacker hits face
                 if defender == None:
                     current_damage += damage
