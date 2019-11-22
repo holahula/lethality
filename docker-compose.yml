@@ -30,18 +30,6 @@ services:
       - net
     depends_on: 
       - mongo
-  lethality-fe:
-    build:
-      context: app/http/app
-    image: lethality-fe
-    restart: always
-    ports:
-      - "80:80"
-      - "3000:3000"
-    networks:
-      - net
-    depends_on:
-      - lethality-be
 
     
 # export MONGO_URL=mongodb://admin:admin@0.0.0.0:27017

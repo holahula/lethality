@@ -10,7 +10,8 @@ import {
     cardMovedFromBoardToBench,
 
     hoveredOverCard,
-    hoveredAwayFromCard
+    hoveredAwayFromCard,
+    goButtonPressed
 } from '../actions/MainActions';
 import useWindowDimensions from '../WindowDimensions';
 
@@ -119,6 +120,7 @@ function draggingOverBoard(snapshot, board) {
 
 function renderPlayerBench(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
+        if (card == null) { return; }
         // let cardImage = require('../img/cards/' + card.cardCode + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
         return (
@@ -160,6 +162,7 @@ function renderPlayerBench(cards, dispatch) {
 function renderPlayerHand(board, dispatch) {
     let cards = board.hand
     let render_obj = cards.map( (card, index) => {
+        if (card == null) { return; }
         //let cardImage = require('../img/cards/' + card.cardCode + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
         return (
@@ -218,6 +221,7 @@ function renderPlayerBoard(cards, dispatch) {
         }
     }
     let render_obj = cards.map( (card, index) => {
+        if (card == null) { return; }
         // let cardImage = require('../img/cards/' + card.cardCode + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
         return (
@@ -268,20 +272,32 @@ function emptyDraggable() {
 
 function renderOpponentBench(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
+        if (card == null) { return; }
         //let cardImage = require('../img/cards/' + card.cardCode + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
-        return <img index={index} src={cardImage} className="Bench-card No-grab"
-            key={index}
-            onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
-            onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
-            onMouseLeave={(event) => onMouseExit(event, dispatch)}
-        />;
+        return (
+            <Draggable draggableId={card.uuid} key={index} index={index}>
+                {(provided, snapshot) => (
+                    <img index={index} src={cardImage} className="Bench-card"
+                        key={index}
+                    
+                        onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
+                        onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
+                        onMouseLeave={(event) => onMouseExit(event, dispatch)}
+                    
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps} />
+                )}
+            </Draggable>
+        );
     });
     return render_obj;
 }
 
 function renderOpponentBoard(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
+        if (card == null) { return; }
         //let cardImage = require('../img/cards/' + card.cardCode + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
         return (
@@ -368,9 +384,9 @@ function setWindowHeight(window) {
 function Play({game_state, dispatch}) {
     let board = game_state.game_state;
     let hover = game_state.hover;
-    let spells = game_state.game_state.spell_stack;
-
+    // let spells = game_state.game_state.spell_stack;
     const {width, height} = useWindowDimensions();
+
     return (
             <div className="Game">
                 <img className="Hover-card"
@@ -393,12 +409,19 @@ function Play({game_state, dispatch}) {
                     </div>
 
                     <div className="Board-column">
+                    <DragDropContext onDragEnd={(result) => onDragEnd(result, board, dispatch)}>
+
                         <div className="Opponent">
                             <div className="Opponent-bench">
                                 <span className="Description-font">OPPONENT BENCH</span>
-                                <div className="Bench-row">
-                                    {renderOpponentBench(board.o_bench, dispatch)}
-                                </div>
+                                <Droppable droppableId="opp_bench" direction="horizontal">
+                                    {(provided, snapshot) => (
+                                        <div className="Bench-row" ref={provided.innerRef}>
+                                        {renderOpponentBench(board.o_bench, dispatch)}
+                                    </div>
+                                    )}
+                                </Droppable>
+                                
                             </div>
                             <div className="Opponent-board">
                                 <div className="Opponent-board-main">
@@ -411,12 +434,11 @@ function Play({game_state, dispatch}) {
                         </div>
                         
                         <div className="Spells">
-                            {renderSpells(spells, dispatch)}
+            {//renderSpells(spells, dispatch)}
+}
                         </div>
 
                         <div className="Player">
-                            <DragDropContext onDragEnd={(result) => onDragEnd(result, board, dispatch)}>
-
                                 <Droppable droppableId="board" direction="horizontal">
                                     {(provided, snapshot) => (
                                         <div className="Player-board">
@@ -432,7 +454,6 @@ function Play({game_state, dispatch}) {
                                                     <div style={{opacity: "0%"}}>
                                                     {provided.placeholder}
                                                     </div>
-                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -467,12 +488,10 @@ function Play({game_state, dispatch}) {
                                     )}
                                     
                                 </Droppable>
-                                
-                            </DragDropContext>
 
                         </div>
 
-                        
+                        </DragDropContext>
                         
 
                         
@@ -494,7 +513,10 @@ function Play({game_state, dispatch}) {
                         </div>
 
                         <div className="Action-button-container">
-                            <div className="Action-button">
+                            <div className="Action-button" onClick={(btn) => {
+                                console.log("GO!");
+                                dispatch(goButtonPressed(board));
+                            }}>
                                 <span className="Action-button-text">
                                     {board.action_button_text}
                                 </span>
