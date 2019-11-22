@@ -204,7 +204,7 @@ class Service(object):
 
     def standoff(self, game, action):
         # When an attacking minion faces an enemy minion
-        # Check if minion has quick attack first, then check everything else
+        # This is where you check if they have barrier or tough
         pass
 
     def direct_hit(self, game, action):
@@ -229,6 +229,7 @@ class Service(object):
                 game['o_health'] -= max(0, (card['attack'] + card['attack_delta']) - (opposing_card['health'] + opposing_card['health_delta']))
 
     def barrier(self, game, action):
+        # Negate the first damage done to it
         pass
 
     def elusive(self, game, action):
@@ -251,6 +252,7 @@ class Service(object):
                     card['health_delta'] -= (opposing_card['attack_delta'] + opposing_card['attack'])
 
     def tough(self, game, action):
+        # Take one less damage from all sources
         pass
 
     def regeneration(self, game, action):
