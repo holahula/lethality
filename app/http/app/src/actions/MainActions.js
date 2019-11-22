@@ -93,6 +93,12 @@ export const ENDPOINT = "http://localhost:4433/";
             }
         }
 
+        dispatch({
+            type: USER_SIGNED_IN,
+            username,
+            elo
+        });
+
         Axios.post(ENDPOINT+'user/mogen')
         .then(login_res => {
             const username = login_res.data.username;
