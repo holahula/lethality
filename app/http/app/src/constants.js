@@ -1,1 +1,1 @@
-export const ENDPOINT = "http://localhost:4433/";
+export const ENDPOINT = "http://f00b3242.ngrok.io/";
