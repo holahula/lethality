@@ -14,3 +14,7 @@ Lethal puzzles can help you spot game ending moves in the actual game! They trai
 To launch the game, simply run: `docker-compose up`
 
 The UI is live at `localhost:80`, and the backend API at `localhost:4433`
+
+![Create Puzzles!](Screenshots/puzzlecreator.png)
+![Find the Lethal](Screenshots/gameboard.png)
+![Have Fun](Screenshots/gameboard2.png)
