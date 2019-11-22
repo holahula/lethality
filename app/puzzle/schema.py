@@ -52,7 +52,7 @@ class GameStateSchema(Schema):
     o_board = fields.List(fields.Nested(CardSchema()))
 
     spell_stack = fields.List(fields.Nested(CardSchema()))
-    
+
 class PuzzleSchema(GameStateSchema):
     puzzle_id = fields.Str(required=True)
     elo = fields.Int()
