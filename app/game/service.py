@@ -87,8 +87,6 @@ class Service(object):
             game['o_board'][index] = best_defense[attack_board_count]
             attack_board_count += 1
 
-        
-
     # 1-to-1 matching with easy endpoints for mogen
     # dragged_to_bench
     # dragged_to_board
@@ -197,7 +195,6 @@ class Service(object):
             # Every other case
             else:
                 self.standoff(game, action_data)
-                
 
     def pass_turn(self, game, action):
         pass

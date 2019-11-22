@@ -10,8 +10,10 @@ class Service:
         users = self.repo_client.find_all({})
         return [self.dump(user) for user in users]
 
-    def find_user(self, user_req):
-        user = self.repo_client.find({'user_id': user_req["user_id"]})
+    def find_user(self, user_id):
+        # user = self.repo_client.find({'user_id': user_req["user_id"]})
+        user = self.repo_client.find({'user_id': user_id})
+        
         return self.dump(user)
 #fix
     def create_user(self, user_req):
@@ -22,8 +24,8 @@ class Service:
         records_affected = self.repo_client.update({"user_id": user_req["user_id"]}, self.prepare_user(user_req))
         return records_affected > 0
 
-    def delete_user(self, user_req):
-        records_affected = self.repo_client.delete({"user_id": user_req["user_id"]})
+    def delete_user(self, user_id):
+        records_affected = self.repo_client.delete({"user_id": user_id})
         return records_affected > 0
 
     def dump(self, data):
