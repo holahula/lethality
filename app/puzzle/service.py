@@ -3,20 +3,15 @@ from ..repository.mongo_puzzle import MongoPuzzleRepository
 from .schema import PuzzleSchema
 
 class Service:
-    def __init__(self, puzzle_id, elo, repo_client=Repository(adapter=MongoPuzzleRepository)):
-        self.puzzle_id = puzzle_id
-        self.elo = elo
+    def __init__(self, repo_client=Repository(adapter=MongoPuzzleRepository)):
         self.repo_client = repo_client
 
-        if not puzzle_id:
-            raise Exception("puzzle id not provided")
-
     def find_all_puzzles(self):
-        puzzles = self.repo_client.find_all({'puzzle_id': self.puzzle_id})
+        puzzles = self.repo_client.find_all({})
         return [self.dump(puzzle) for puzzle in puzzles]
 
-    def find_puzzle(self):
-        puzzle = self.repo_client.find({'puzzle_id': self.puzzle_id})
+    def find_puzzle(self, puzzle_id):
+        puzzle = self.repo_client.find({'puzzle_id': puzzle_id})
         return self.dump(puzzle)
     
     def create_puzzle(self, game_state):
@@ -32,7 +27,8 @@ class Service:
         return records_affected > 0
     
     def dump(self, data):
-        return PuzzleSchema(exclude=['_puzzle_id']).dump(data).data
+        # return PuzzleSchema(exclude=['_puzzle_id']).dump(data).data
+        return PuzzleSchema().dump(data)
 
     def prepare_puzzle(self, game_state):
         data = game_state.data
