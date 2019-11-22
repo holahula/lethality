@@ -89,15 +89,11 @@ def puzzle_functions():
     except ValidationError as error:
         return json_response({"error": error})
 
-    # HEAD
-    if puzzle_req.errors:
-        return json_response({"error": puzzle_req.errorss})
+    puzzle_service = PuzzleService()
 
-    puzzle_service=PuzzleService()
-    if puzzle_service.update_puzzle(elo, puzzle_req):
-        return json_response(puzzle_service.data)
-    else:
-        return json_response({"error": "puzzle not found"}, 404)
+    if request.method == "POST":
+        puzzle = PuzzleService().create_puzzle(puzzle_req)
+        return json_response({"success": "puzzle created - " + str(puzzle_req["puzzle_id"])}, 200)
 
     elif request.method == "PUT":
         if puzzle_service.update_puzzle(puzzle_req):
@@ -135,14 +131,7 @@ def user_functions():
 
     identity_service = IdentityService()
 
-    if request.method == "GET":
-        user = identity_service.find_user(user_req)
-        if user:
-            return json_response(user)
-        else:
-            return json_response({"error": "user not found"}, 404)
-
-    elif request.method == "POST":
+    if request.method == "POST":
         user = identity_service.create_user(user_req)
         return json_response({"success": "user created - " + user_req["user_id"]}, 200)
 
