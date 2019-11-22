@@ -11,10 +11,12 @@ import {
     USER_SIGNED_OUT,
     GAME_WON,
     CREATE_BUTTON_PRESSED,
-    PUZZLE_LOADED
+    PUZZLE_LOADED,
+    BOARD_RECEIVED
 } from '../actions/MainActions';
 import DataDragon from '../DataDragon';
 import { CARD_ADDED, FIELD_UPDATED, PUZZLE_CREATED } from '../actions/CreateActions';
+
 
 const cardSchema = (card_id, effect_status) => {
 
@@ -130,6 +132,10 @@ const initialState = {
 
 function lethalApp(state = initialState, action) {
     switch(action.type) {
+        case BOARD_RECEIVED:
+            return Object.assign({}, state, {
+                game_state: action.board
+            });
         case PUZZLE_LOADED:
             return Object.assign({}, state, {
                 game_state: action.puzzle
