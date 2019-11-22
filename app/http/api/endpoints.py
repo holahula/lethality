@@ -69,7 +69,7 @@ def puzzle(puzzle_id):
             return json_response(puzzle)
         else:
             return json_response({"error": "no puzzles found"}, 404)
-    
+
     elif request.method == "DELETE":
         if puzzle_service.delete_puzzle(puzzle_id):
             return json_response({"success": "puzzle deleted"}, 200)
@@ -93,7 +93,7 @@ def puzzle_functions():
     elif request.method == "PUT":
         if puzzle_service.update_puzzle(puzzle_req):
             return json_response({"success": "puzzle updated"}, 200)
-        else: 
+        else:
             return json_response({"error": "puzzle not found"}, 404)
 
 # Requires: user_id:string
@@ -114,7 +114,7 @@ def user(user_id):
             return json_response({"success": "user deleted"}, 200)
         else:
             return json_response({"error": "user not found"}, 404)
-            
+
 @app.route("/user", methods = ["POST", "PUT"])
 def user_functions():
     try:
@@ -134,38 +134,71 @@ def user_functions():
         else:
             return json_response({"error": "user not found"}, 404)
 
+@app.route("/action", methods = ["POST"])
+def take_action():
+    args = json.loads(request.data)
+    # getting necessary objects
+    game = args['game']
+    action = args['action']
+    method = args['method']
+    # game service instance
+    g = Game()
+    # get functions matching name of method given
+    f = getattr(g, method)
+    # call with game and action
+    f(game, action)
+    # return mutated game object
+    return json_response(game)
+
 # POST:
+# game:
 # {
-#   game_state
-#   action: {
-#       action_name: "DRAGGED_TO_BENCH",
-#       cards_selected: [uuid],
-#       target_object: uuid,
-#       value: 0
-#   }
+#     'p_health': 20,
+#     'o_health': 20,
+#     'p_mana': 10,
+#     'o_mana': 10,
+#     'p_spell_mana': 3,
+#     'o_spell_mana': 3,
+#     'attack_token': True,
+#     'action_button_text': 'PASS',
+#     'p_bench': [
+#         `card data dictionaries`
+#     ],
+#     'o_bench': [],
+#     'p_board': [],
+#     'o_board': [],
+#     'hand': [],
+#     'spell_stack': []
 # }
+# action:
+# {
+#     'uuid': '12345',
+#     'targets': [],
+#     'area': 'p_bench'
+# }
+# method:
+# "play_minion" OR "play_spell", any name of method in Game
+
 # RESPONSE:
+# game:
 # {
-#   game_state
-#   change: {
-#       return_action: "",
-#       card_uuid: "",
-#       value: 0
-#   }
+#     'p_health': 20,
+#     'o_health': 20,
+#     'p_mana': 10,
+#     'o_mana': 10,
+#     'p_spell_mana': 3,
+#     'o_spell_mana': 3,
+#     'attack_token': True,
+#     'action_button_text': 'PASS',
+#     'p_bench': [
+#         `card data dictionaries`
+#     ],
+#     'o_bench': [],
+#     'p_board': [],
+#     'o_board': [],
+#     'hand': [],
+#     'spell_stack': []
 # }
-
-# @app.route("/action/dragged_to_bench", methods = ["POST"])
-# def process_move():
-
-# @app.route("/action/enemies_selected", methods = ["POST"])
-# @app.route("/action/dragged_to_board", methods = ["POST"])
-# @app.route("/action/passed", methods = ["POST"])
-
-
-
-# # return: list of users and elo (up to 50)
-# @app.route("/leaderboards", methods = ["GET"])
-
 
 # ____
 # /    \
