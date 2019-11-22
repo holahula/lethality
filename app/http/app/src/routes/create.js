@@ -12,39 +12,71 @@ import {
 
     hoveredOverCard,
     hoveredAwayFromCard,
-    create_cardAdded
+    createButtonPressed,
 } from '../actions/MainActions';
+
+import { create_cardAdded, fieldUpdated, uploadLethal } from '../actions/CreateActions';
+
 import useWindowDimensions from '../WindowDimensions';
 import { booleanLiteralTypeAnnotation } from '@babel/types';
 
-function onDragEnd (result, board, dispatch) {
-    const {source, destination} = result;
-    if (!destination){return}
 
-    if (source.droppableId === destination.droppableId) {
-        // source = destination
-        switch(source.droppableId) {
-            case "hand":
-                // re-order the cards in hand
-                dispatch(reorderHand(board, source.index, destination.index));
-                return;
-            default:
-                return;
-        }
-        // re-order the cards in hand
-    }
+function updateParams(param, newvalue, dispatch) {
+    const new_val = newvalue.target.value;
+    dispatch(fieldUpdated(param, new_val));
+}
 
-    if (source.droppableId === "hand" && destination.droppableId === "bench") {
-        dispatch(cardMovedFromHandToBench(board, source.index));
-    }
+function createOverlay(game_state, dispatch) {
+    if (!game_state.custom_game_board.show_popup){return;}
 
-    if (source.droppableId === "bench" && destination.droppableId === "board") {
-        dispatch(cardMovedFromBenchToBoard(board, source.index));
-    }
+    return (
+        <div className="Create-overlay">
+            <div className="WindowBG">
+                <span className="Overlay-Header">Create Lethal</span>
+                <table className="Overlay-table">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                    </tr>
 
-    if (source.droppableId === "board" && destination.droppableId === "bench") {
-        dispatch(cardMovedFromBoardToBench(board, source.index));
-    }
+                    <tr>
+                        <td>
+                            <div className="input-header">Opponent Health</div>
+                            <input value={game_state.custom_game_board.o_health}
+                                className="Field-input"
+                                onChange={(value) => { updateParams("o_health", value, dispatch)}
+                            } />
+
+                        </td>
+                        <td>
+                            <div className="input-header">Player Health</div>
+                            <input value={game_state.custom_game_board.p_health}
+                            className="Field-input"
+                            onChange={(value) => { updateParams("p_health", value, dispatch)}} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div className="input-header">Opponent Mana</div>
+                            <input  value={game_state.custom_game_board.o_mana}
+                            className="Field-input"
+                            onChange={(value) => { updateParams("o_mana", value, dispatch)}}/>
+                        </td>
+                        <td>
+                            <div className="input-header">Player Mana</div>
+                            <input  value={game_state.custom_game_board.p_mana}
+                            className="Field-input"
+                            onChange={(value) => { updateParams("p_mana", value, dispatch)}}/>
+                        </td>
+                    </tr>
+                </table>
+
+                <div className="Button-submit" onClick={(evt) => {
+                    dispatch(uploadLethal(game_state))
+                }}>PUBLISH</div>
+            </div>
+        </div>
+    );
 }
 
 function onMouseEnter(data, card, dispatch) {
@@ -77,7 +109,7 @@ function getHoverCardStyle(hover) {
 
 function draggingOverBench(snapshot, board) {
 
-    let hand = board.cards_in_hand;
+    let hand = board.hand;
     let p_board = board.p_board;
     // show "move to bench" UI if the card is from the hand
     let is_valid_card = false;
@@ -159,7 +191,7 @@ function renderPlayerBench(cards, dispatch) {
 
 
 function renderPlayerHand(board, dispatch) {
-    let cards = board.cards_in_hand
+    let cards = board.hand
     let render_obj = cards.map( (card, index) => {
         //let cardImage = require('../img/cards/' + card.cardCode + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
@@ -259,7 +291,7 @@ function renderPlayerBoard(cards, dispatch) {
                     onMouseLeave={(event) => onMouseExit(event, dispatch)}
                     style={ showHealthIndicator(snapshot) }
                     >
-                        <span className="Board-card-health-text">{card.hp}</span>
+                        <span className="Board-card-health-text">{card.health}</span>
                     </div>
                     </div>
                 )}
@@ -295,7 +327,7 @@ function renderOpponentBoard(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
         //let cardImage = require('../img/cards/' + card.cardCode + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
-        return <img index={index} src={cardImage} className="Board-card No-grab"
+        return <img key={index} index={index} src={cardImage} className="Board-card No-grab"
             onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
             onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
             onMouseLeave={(event) => onMouseExit(event, dispatch)}
@@ -382,7 +414,6 @@ function renderLibraryCards(cards, dispatch) {
             </Draggable>
         )
     });
-    
     return library;
 }
 
@@ -403,16 +434,23 @@ const onDragEndLib = (result, board, dispatch, library_index_to_card) => {
 
             case "opponent_bench":
                 console.log("obench");
+                dispatch(create_cardAdded(destination.droppableId, card, board));
                 break;
             case "opponent_board":
                 console.log("oboard");
+                dispatch(create_cardAdded(destination.droppableId, card, board));
                 break;
             case "player_bench":
                 console.log("pbench");
+                dispatch(create_cardAdded(destination.droppableId, card, board));
                 break;
             case "player_board":
                 console.log("pboard");
+                dispatch(create_cardAdded(destination.droppableId, card, board));
                 break;
+            case "player_hand":
+                console.log('phand');
+                dispatch(create_cardAdded(destination.droppableId, card, board));
             default:
         }
     }
@@ -423,7 +461,7 @@ function Create({game_state, dispatch}) {
     let board = game_state.custom_game_board;
 
     let hover = game_state.hover;
-    let spells = game_state.game_state.spell_stack;
+    let spells = game_state.custom_game_board.spell_stack;
 
     let library_cards = game_state.library_cards;
 
@@ -437,11 +475,14 @@ function Create({game_state, dispatch}) {
     return (
             <DragDropContext onDragEnd={
                 (result) => onDragEndLib(result, board, dispatch, library_index_to_card)}>
+
             <div className="Game">
+            {createOverlay(game_state, dispatch)}
                 <img className="Hover-card"
                     src={getHoverCardURL(hover)}
                     style={getHoverCardStyle(hover)}/>
                 <div className="Game-columns Game-columns-override" style={{height: height-70}}>
+
 
                     <div className="Card-library">
                         <div className="Card-library-title">CARD LIBRARY</div>
@@ -549,8 +590,13 @@ function Create({game_state, dispatch}) {
                                 </Droppable>
 
                         </div>
+                    </div>
 
-                        
+
+                    <div className="Right-col">
+                        <img  onClick={(evt) => {
+                    dispatch(createButtonPressed())
+                }} src={require('../img/CREATE.png')} className="Create-btn"/>
                     </div>
                 </div>
 

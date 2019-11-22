@@ -74,8 +74,9 @@ function getHoverCardStyle(hover) {
 
 function draggingOverBench(snapshot, board) {
 
-    let hand = board.cards_in_hand;
+    let hand = board.hand;
     let p_board = board.p_board;
+
     // show "move to bench" UI if the card is from the hand
     let is_valid_card = false;
     for (let i=0; i<hand.length; i++){
@@ -157,7 +158,7 @@ function renderPlayerBench(cards, dispatch) {
 
 
 function renderPlayerHand(board, dispatch) {
-    let cards = board.cards_in_hand
+    let cards = board.hand
     let render_obj = cards.map( (card, index) => {
         //let cardImage = require('../img/cards/' + card.cardCode + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
@@ -247,7 +248,7 @@ function renderPlayerBoard(cards, dispatch) {
                     onMouseLeave={(event) => onMouseExit(event, dispatch)}
                     style={ showHealthIndicator(snapshot) }
                     >
-                        <span className="Board-card-health-text">{card.hp}</span>
+                        <span className="Board-card-health-text">{card.health}</span>
                     </div>
                     </div>
                 )}

@@ -41,9 +41,6 @@ function App({isSignedIn, showWinScreen}) {
 
         <Header />
         <Switch>
-          <Route path="/rankings">
-            <Rankings />
-          </Route>
           <Route path="/create">
             <Create />
           </Route>

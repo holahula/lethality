@@ -9,9 +9,11 @@ import {
     USER_SIGNED_IN,
     USERNAME_FIELD_CHANGED,
     USER_SIGNED_OUT,
-    GAME_WON
+    GAME_WON,
+    CREATE_BUTTON_PRESSED
 } from '../actions/MainActions';
 import DataDragon from '../DataDragon';
+import { CARD_ADDED, FIELD_UPDATED, PUZZLE_CREATED } from '../actions/CreateActions';
 
 const cardSchema = (card_id, effect_status) => {
 
@@ -75,6 +77,7 @@ const initialState = {
     username: "",
     elo: 1000,
     game_state: {
+        "puzzle_id": 5,
         "p_health": 20,
         "o_health": 20,
         "p_mana": 1,
@@ -86,14 +89,17 @@ const initialState = {
         "action_button_text": "GO",
 
         "o_bench": cardGenerator(2),
-        "o_board": cardGenerator(0),
+        "o_board": cardGenerator(4),
         "p_board": cardGenerator(0),
         "p_bench": cardGenerator(0),
-        "cards_in_hand": cardGenerator(10),
+        "hand": cardGenerator(10),
         "spell_stack": cardGenerator(3),
     },
 
     custom_game_board: {
+        show_popup: false,
+
+        "puzzle_id": 5,
         "p_health": 20,
         "o_health": 20,
         "p_mana": 1,
@@ -104,12 +110,12 @@ const initialState = {
 
         "action_button_text": "GO",
 
-        "o_bench": cardGenerator(2),
+        "o_bench": cardGenerator(0),
         "o_board": cardGenerator(0),
         "p_board": cardGenerator(0),
         "p_bench": cardGenerator(0),
-        "cards_in_hand": cardGenerator(10),
-        "spell_stack": cardGenerator(10)
+        "hand": cardGenerator(0),
+        "spell_stack": [],
     },
 
     hover: {
@@ -123,6 +129,93 @@ const initialState = {
 
 function lethalApp(state = initialState, action) {
     switch(action.type) {
+        case PUZZLE_CREATED:
+            return Object.assign({}, state, {
+                custom_game_board: {
+                    ...state.custom_game_board,
+                    show_popup: false
+                }
+            });
+        case CREATE_BUTTON_PRESSED:
+            return Object.assign({}, state, {
+                custom_game_board: {
+                    ...state.custom_game_board,
+                    show_popup: true
+                }
+            });
+        case FIELD_UPDATED:
+            switch(action.destination) {
+                case "o_health":
+                    return Object.assign({}, state, {
+                        custom_game_board: {
+                            ...state.custom_game_board,
+                            o_health: action.text
+                        }
+                    });
+                case "o_mana":
+                    return Object.assign({}, state, {
+                        custom_game_board: {
+                            ...state.custom_game_board,
+                            o_mana: action.text
+                        }
+                    });
+                case "p_health":
+                return Object.assign({}, state, {
+                    custom_game_board: {
+                        ...state.custom_game_board,
+                        p_health: action.text
+                    }
+                });
+                case "p_mana":
+                    return Object.assign({}, state, {
+                        custom_game_board: {
+                            ...state.custom_game_board,
+                            p_mana: action.text
+                        }
+                    });
+                }
+        case CARD_ADDED:
+            switch(action.destination) {
+                case "player_bench":
+                        return Object.assign({}, state, {
+                            custom_game_board: {
+                                ...state.custom_game_board,
+                                p_bench: action.new_bench
+                            }
+                        });
+                case "opponent_bench":
+                    return Object.assign({}, state, {
+                        custom_game_board: {
+                            ...state.custom_game_board,
+                            o_bench: action.new_bench
+                        }
+                    });
+                case "opponent_board":
+                    return Object.assign({}, state, {
+                        custom_game_board: {
+                            ...state.custom_game_board,
+                            o_board: action.new_board
+                        }
+                    });
+                case "player_board":
+                    return Object.assign({}, state, {
+                        custom_game_board: {
+                            ...state.custom_game_board,
+                            p_board: action.new_board
+                        }
+                    });
+                case "player_hand":
+                    return Object.assign({}, state, {
+                        custom_game_board: {
+                            ...state.custom_game_board,
+                            hand: action.new_hand
+                        }
+                    });
+                default:
+                    break;
+            }
+            
+            break;
         case GAME_WON:
             return Object.assign({}, state, {
                 showWinScreen: true,

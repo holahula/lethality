@@ -24,7 +24,6 @@ function Header({username, elo, dispatch}) {
             <span className="Nav-bar">
               <Link className="Nav-item" to="/">PLAY</Link>
               <Link className="Nav-item" to="/create">CREATE</Link>
-              <Link className="Nav-item" to="/rankings">RANKINGS</Link>
               <div className="User-profile">
 
                 <div className="User-profile-data">
