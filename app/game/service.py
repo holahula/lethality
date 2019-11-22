@@ -201,7 +201,16 @@ class Service(object):
         pass
 
     def quick_attack(self, game, action):
-        pass
+        # works only on player side, attacks other card first before getting hit
+        for card in game['p_board']:
+            if card['uuid'] == action['uuid']:
+                index = game['p_board'].index(card)
+                # Finds opposing card and attacks it first
+                opposing_card = game['o_board'][index]
+                opposing_card['health_delta'] - = card['attack_delta']
+                # If opposing card doesnt die, it attacks
+                if opposing_card['health_delta'] > 0:
+                    card['health_delta'] - = opposing_card['attack_delta']
 
     def tough(self, game, action):
         pass
