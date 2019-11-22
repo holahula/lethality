@@ -1,5 +1,6 @@
 import requests
 import json
+import itertools
 
 class Service(object):
 
@@ -34,7 +35,49 @@ class Service(object):
         return card_info["keywords"]
     
     def block_AI(self, game, action):
-        pass
+        # Create a board with all possible defenders' health and board with all possible attacker's attack
+        fake_board = []
+        attack_board = []
+        # Create a list determining if attacking cards have overwhelming
+        is_overwhelming = []
+        current_damage = 0
+        # List of the damage taken from all possibilities of defending
+        all_possible_damage = []
+        # Fill fake_board with bench cards, then fill the rest with None
+        for card in game['o_bench']:
+            fake_board.append(card['health_delta'])
+        for card in game['p_board']-len(game['o_bench']):
+            fake_board.append(None)
+        # Fill attack_board with attacking minions
+        for card in game['p_board']:
+            attack_board.append(card['attack_delta'])
+            # If the minion is overwhelming, record it in is_overwhelming
+            if 'overwhelm' in card['keywords']:
+                attack_board.append(True)
+            else:
+                attack_board.append(False)
+        # Find all permutations of defending
+        perms = list(itertools.permutations(fake_board, len(game['p_board'])))
+        # Do a quick combat simulation of each single permutation to find overall damage
+        for combinations in perms:
+            # Go through each and every single standoff
+            for defender in combinations:
+                index = combinations.index(defender)
+                # This means there's no defenders, so attacker hits face
+                if defender == None:
+                    current_damage += attack_board[index]
+                # This means minion has overwhelming, apply overwhelming calculations
+                elif is_overwhelming[index]:
+                    current_damage += (max(attack_board[index]-defender, 0))
+            # Store the current_damage to the all_possible_damage list
+            all_possible_damage.append(current_damage)
+            # Reset current damage
+            current_damage = 0
+        # Find index of lowest possible damage
+        lowest_damage = all_possible_damage.index(min(all_possible_damage))
+        # Return the list of defenders that will let you take least amount of damage
+        return perms[lowest_damage]
+        
 
     # 1-to-1 matching with easy endpoints for mogen
     # dragged_to_bench
@@ -174,7 +217,7 @@ class Service(object):
                 # Finds opposing card of overwhelmer
                 opposing_card = self.find_opposing_card(game, action)
                 # Apply overwhelm keyword effect
-                game['o_health'] -= max(0, card['delta_attack'] - opposing_card['delta_health'])
+                game['o_health'] -= max(0, card['attack_delta'] - opposing_card['health_delta'])
 
     def barrier(self, game, action):
         pass
