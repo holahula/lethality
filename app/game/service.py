@@ -189,18 +189,6 @@ class Service(object):
     def pass_turn(self, game, action):
         pass
 
-    def burst_spell(self, game, action):
-        pass
-
-    def slow_spell(self, game, action):
-        pass
-
-    def fast_spell(self, game, action):
-        pass
-
-    def play_champion(self, game, action):
-        pass
-
     def standoff(self, game, action):
         # When an attacking minion faces an enemy minion
         # Check if minion has quick attack first, then check everything else
@@ -212,12 +200,6 @@ class Service(object):
         # Find total damage of attacker
         dmg = card['attack'] + card['attack_delta']
         game['o_health'] -= dmg
-
-    def battlecry(self, game, action):
-        pass
-
-    def last_breath(self, game, action):
-        pass
 
     def stun(self, game, action):
         pass
@@ -236,37 +218,10 @@ class Service(object):
     def barrier(self, game, action):
         pass
 
-    def strike(self, game, action):
-        pass
-
-    def nexus_strike(self, game, action):
-        pass
-
-    def obliterate(self, game, action):
-        pass
-
-    def double_strike(self, game, action):
-        pass
-
     def elusive(self, game, action):
         pass
 
     def drain(self, game, action):
-        pass
-
-    def trap(self, game, action):
-        pass
-
-    def discard(self, game, action):
-        pass
-
-    def capture(self, game, action):
-        pass
-
-    def frostbite(self, game, action):
-        pass
-
-    def fleeting(self, game, action):
         pass
 
     def quick_attack(self, game, action):
@@ -285,9 +240,6 @@ class Service(object):
     def tough(self, game, action):
         pass
 
-    def recall(self, game, action):
-        pass
-
     def regeneration(self, game, action):
         pass
 
@@ -304,13 +256,6 @@ class Service(object):
                 else:
                     game['p_health'] = max(20, game['p_health'] + attack_delta + attack)
 
-
-    def enlightened(self, game, action):
-        pass
-
-    def ephemeral(self, game, action):
-        pass
-
     def challenger(self, game, action):
         # Find the card I'm challenging, find the index of the challenger
         target = action["targets"][0]
@@ -321,18 +266,8 @@ class Service(object):
                 game["o_board"][index] = card
                 game['o_bench'].remove(card)
 
-
-    def imbue(self, game, action):
-        pass
-
     def fearsome(self, game, action):
         pass
 
     def cant_block(self, game, action):
-        pass
-
-    def support(self, game, action):
-        pass
-
-    def level_up(self, game, action):
         pass
