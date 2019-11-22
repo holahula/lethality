@@ -33,26 +33,19 @@ class Service(object):
         # Create a board with all possible defenders' health and board with all possible attacker's attack
         fake_board = []
         attack_board = []
-        # Create a list determining if attacking cards have overwhelming
-        is_overwhelming = []
         current_damage = 0
         # List of the damage taken from all possibilities of defending
         all_possible_damage = []
         # Fill fake_board with bench cards, then fill the rest with None
         for card in game['o_bench']:
-            # Find total health of minion
-            fake_board.append(card['health_delta'] + card['health'])
+            if "Can't Block" not in card['keywords']:
+                # If can block, add card to defending lineup
+                fake_board.append(card)
         for card in game['p_board']-len(game['o_bench']):
             fake_board.append(None)
         # Fill attack_board with attacking minions
         for card in game['p_board']:
-            # Find total attack of attacker
-            attack_board.append(card['attack_delta'] + card['attack'])
-            # If the minion is overwhelming, record it in is_overwhelming
-            if 'overwhelm' in card['keywords']:
-                attack_board.append(True)
-            else:
-                attack_board.append(False)
+            attack_board.append(card)
         # Find all permutations of defending
         perms = list(itertools.permutations(fake_board, len(game['p_board'])))
         # Do a quick combat simulation of each single permutation to find overall damage
@@ -60,12 +53,22 @@ class Service(object):
             # Go through each and every single standoff
             for defender in combinations:
                 index = combinations.index(defender)
+                attacker = attack_board[index]
+                damage = attacker['attack'] + attacker['attack_delta']
+                defender_attack = defender['attack'] + defender['attack_delta']
+                # Really Scuffed, but if attacker is elusive and defender is not elusive, add alot to current damage
+                if 'Elusive' in attacker['keywords'] and 'Elusive' not in defender['keywords']:
+                    current_damage += 1000000
+                # Also super scuffed, but if attacker is fearsome and defender has less than 3 attack, add alot to current damage
+                elif 'Fearsome' in attacker['keywords'] and defender_attack < 3:
+                    current_damage += 1000000
                 # This means there's no defenders, so attacker hits face
-                if defender == None:
-                    current_damage += attack_board[index]
+                elif defender == None:
+                    current_damage += damage
                 # This means minion has overwhelming, apply overwhelming calculations
-                elif is_overwhelming[index]:
-                    current_damage += (max(attack_board[index]-defender, 0))
+                elif 'Overwhelm' in attacker['keywords']:
+                    defender_hp = defender['health'] + defender['health_delta']
+                    current_damage += (max(damage-defender_hp, 0))
             # Store the current_damage to the all_possible_damage list
             all_possible_damage.append(current_damage)
             # Reset current damage
