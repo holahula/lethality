@@ -134,38 +134,71 @@ def user_functions():
         else:
             return json_response({"error": "user not found"}, 404)
 
+@app.route("/action", methods = ["POST"])
+def take_action():
+    args = json.loads(request.data)
+    # getting necessary objects
+    game = args['game']
+    action = args['action']
+    method = args['method']
+    # game service instance
+    g = Game()
+    # get functions matching name of method given
+    f = getattr(g, method)
+    # call with game and action
+    f(game, action)
+    # return mutated game object
+    return json_response(game)
+
 # POST:
+# game:
 # {
-#   game_state
-#   action: {
-#       action_name: "DRAGGED_TO_BENCH",
-#       cards_selected: [uuid],
-#       target_object: uuid,
-#       value: 0
-#   }
+#     'p_health': 20,
+#     'o_health': 20,
+#     'p_mana': 10,
+#     'o_mana': 10,
+#     'p_spell_mana': 3,
+#     'o_spell_mana': 3,
+#     'attack_token': True,
+#     'action_button_text': 'PASS',
+#     'p_bench': [
+#         `card data dictionaries`
+#     ],
+#     'o_bench': [],
+#     'p_board': [],
+#     'o_board': [],
+#     'hand': [],
+#     'spell_stack': []
 # }
+# action:
+# {
+#     'uuid': '12345',
+#     'targets': [],
+#     'area': 'p_bench'
+# }
+# method:
+# "play_minion" OR "play_spell", any name of method in Game
+
 # RESPONSE:
+# game:
 # {
-#   game_state
-#   change: {
-#       return_action: "",
-#       card_uuid: "",
-#       value: 0
-#   }
+#     'p_health': 20,
+#     'o_health': 20,
+#     'p_mana': 10,
+#     'o_mana': 10,
+#     'p_spell_mana': 3,
+#     'o_spell_mana': 3,
+#     'attack_token': True,
+#     'action_button_text': 'PASS',
+#     'p_bench': [
+#         `card data dictionaries`
+#     ],
+#     'o_bench': [],
+#     'p_board': [],
+#     'o_board': [],
+#     'hand': [],
+#     'spell_stack': []
 # }
-
-# @app.route("/action/dragged_to_bench", methods = ["POST"])
-# def process_move():
-
-# @app.route("/action/enemies_selected", methods = ["POST"])
-# @app.route("/action/dragged_to_board", methods = ["POST"])
-# @app.route("/action/passed", methods = ["POST"])
-
-
-
-# # return: list of users and elo (up to 50)
-# @app.route("/leaderboards", methods = ["GET"])
-
 
 # ____
 # /    \
