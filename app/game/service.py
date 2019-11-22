@@ -181,10 +181,23 @@ class Service(object):
                     return game['p_board'][index]
 
     def attack_phase(self, game, action):
-        # AI blocks highest attack minions
-        # Spells get played first
-        # Go through each matchup, check keywords for both sides of board and attack
-        pass
+        # AI blocks
+        self.block_AI(game, action)
+        # Goes through every single attacking minion
+        for card in game['p_board']:
+            index = game['p_board'].index(card)
+            # Updates action for each individual minion
+            action_data : {'uuid':card['uuid'], 'targets':[], 'area':'p_board'}
+            # Attack face if no defending minion
+            if game['o_board'][index] is None:
+                self.direct_hit(game, action_data)
+            # Special Quick Attack case
+            elif "Quick Attack" in card['keywords']:
+                self.quick_attack(game, action_data)
+            # Every other case
+            else:
+                self.standoff(game, action_data)
+                
 
     def pass_turn(self, game, action):
         pass
