@@ -1,3 +1,8 @@
+import Cards from '../Cards.json';
+import { ENDPOINT } from '../constants';
+
+const Axios = require('axios');
+const uuid = require('uuid/v4');
 
 /*
  * Action types
@@ -14,10 +19,27 @@ export const HOVERED_AWAY_FROM_CARD = "HOVERED_AWAY_FROM_CARD";;
 export const USER_SIGNED_IN = "USER_SIGNED_IN";
 export const USERNAME_FIELD_CHANGED = "USERNAME_FIELD_CHANGED";
 export const USER_SIGNED_OUT = "USER_SIGNED_OUT";
+export const PUZZLE_LOADED = "PUZZLE_LOADED";
+
+export const GAME_WON = "GAME_WON";
+
+
+export const CREATE_BUTTON_PRESSED = "CREATE_BUTTON_PRESSED";
+
+
+
 
 /*
  * Action creators
  */
+
+
+
+ export function createButtonPressed() {
+    return {
+        type: CREATE_BUTTON_PRESSED,
+    }
+ }
 
  export function signOut() {
      return {
@@ -33,10 +55,81 @@ export const USER_SIGNED_OUT = "USER_SIGNED_OUT";
  }
 
  export function userSignedIn(username) {
-     return {
-         type: USER_SIGNED_IN,
-         username
-     }
+    return dispatch => {
+
+        // fetch("http://localhost:4433/user", {
+        //     method: 'get',
+        //     mode: 'cors',
+        // })
+
+        dispatch({
+            type: USER_SIGNED_IN,
+            username,
+            elo: 1000,
+        });
+
+        const options = {params: {user_id: username}};
+
+        Axios.get(ENDPOINT+'user/'+username)
+        .then(login_res => {
+            const username = login_res.data.user_id;
+            const elo = login_res.data.elo;
+            dispatch({
+                type: USER_SIGNED_IN,
+                username,
+                elo
+            })
+                        
+            // get puzzle
+            Axios.get(ENDPOINT+"puzzles/"+elo)
+            .then(puzzle_res => {
+                console.log(puzzle_res.data);
+                dispatch({
+                    type: PUZZLE_LOADED,
+                    puzzle: puzzle_res.data
+                })
+            })
+            .catch(err => {
+                console.error(err);
+            })
+
+        })
+        .catch(err => {
+            console.log(err)
+            Axios.post(ENDPOINT+'user', {
+                user_id: username,
+                elo: 1000,
+            })
+            .then (reg_response => {
+                if (reg_response.status == 200) {
+                    // sign in
+                    console.log('user: '+  username + " created");
+                    dispatch({
+                        type: USER_SIGNED_IN,
+                        username,
+                        elo: 1000
+                    })
+                                
+                    // get puzzle
+                    Axios.get(ENDPOINT+"puzzles/1000")
+                    .then(puzzle_res => {
+                        console.log(puzzle_res.data);
+                        dispatch({
+                            type: PUZZLE_LOADED,
+                            puzzle: puzzle_res.data
+                        })
+                    })
+                    .catch(err => {
+                        console.error(err);
+                    })
+                    
+                }
+                }
+            );
+        });
+
+    }
+    
  }
 
  export function hoveredOverCard(card, x, y) {
@@ -55,6 +148,7 @@ export const USER_SIGNED_OUT = "USER_SIGNED_OUT";
  }
 
 export function cardMovedFromBoardToBench(board, index_on_board) {
+
     let player_board = Array.from(board.p_board);
     let bench = Array.from(board.p_bench);
 
@@ -69,6 +163,9 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
     board.p_bench = bench;
     board.p_board = new_board;
 
+    // send request
+
+
     // send to reducer
     return {
         type: MOVED_TO_BENCH,
@@ -77,6 +174,11 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
  }
 
  export function cardMovedFromBenchToBoard(board, index_in_bench) {
+     // TODO: REMOVE TEST FOR "win game" condition
+    //  return {
+    //      type: GAME_WON
+    //  }
+
     let player_board = Array.from(board.p_board);
     let bench = Array.from(board.p_bench);
 
@@ -92,6 +194,9 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
     board.p_bench = new_bench;
     board.p_board = player_board;
 
+    // send request
+    
+
     // send to reducer
     return {
         type: MOVED_TO_BOARD,
@@ -101,7 +206,7 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
 
  export function cardMovedFromHandToBench(board, index_in_hand) {
     let bench = Array.from(board.p_bench);
-    let current_hand = Array.from(board.cards_in_hand);
+    let current_hand = Array.from(board.hand);
 
     // get the card
     let card = current_hand.slice(index_in_hand, index_in_hand+1)[0];
@@ -112,7 +217,9 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
 
     // update board
     board.p_bench = bench;
-    board.cards_in_hand = new_hand;
+    board.hand = new_hand;
+    
+    // sent post request (to update mana)
 
     // send to reducer
     return {
@@ -129,11 +236,11 @@ export function changeUsername(username) {
 }
 
 export function reorderHand(game_state, index_old, index_new) {
-    let new_hand = Array.from(game_state.cards_in_hand);
+    let new_hand = Array.from(game_state.hand);
     const [removed] = new_hand.splice(index_old, 1);
     new_hand.splice(index_new, 0, removed);
 
-    game_state.cards_in_hand = new_hand;
+    game_state.hand = new_hand;
 
     return {
         type: REORDER_HAND,

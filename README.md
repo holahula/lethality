@@ -1,25 +1,12 @@
-# lethality
-find the lethal mates
+# LETHALITY
+Lethality is a Legends of Runeterra puzzle solver. The idea is to find lethal from the given position on the board. 
 
-# read me please
-Core Tasks
-1. Authentication System (Users, rank (elo), user puzzles, completed puzzles)
+There are currently two modes:
+  1) Puzzle Solving
+  2) Puzzle Creation 
+ 
+Create puzzles, and let others solve them!
 
-2. Puzzles
+To launch the game, simply run: `docker-compose up`
 
-    - (2.1) Puzzle Creation
-
-        - (2.1.1) A way to store puzzles (Puzzle: board, deck, opponent deck, ... & solution)
-
-        - 2.1.2. UI for building puzzles
-
-    - (2.2) Puzzle Playing / Solving
-
-        - (2.2.1) Displaying a puzzle (Playing the lethal game
-
-        - (2.2.2) Allow user interaction with the puzzle and checking for win condition
-
-3. Ranking / Score System
-    - (3.1) Figure out a way to rank and progress
-4. Rewards Along the Way
-    - (4.1) This is probably the most important part. We want people to feel a sense of accomplishment when they solve a puzzle.
+The UI is live at `localhost:80`, and the backend API at `localhost:4433`

@@ -7,9 +7,9 @@ import { signOut } from '../actions/MainActions';
 
 import '../App.css';
 import React from 'react';
-import logo from '../img/Logo.png';
-import powerOff from '../img/power-off.png';
-import profileTeemo from '../img/profile_teemo.png';
+import logo from './../img/logo.png';
+import powerOff from './../img/power-off.png';
+import profileTeemo from './../img/profile_teemo.png';
 
 function signOut_L(dispatch) {
   dispatch(signOut());
@@ -24,7 +24,6 @@ function Header({username, elo, dispatch}) {
             <span className="Nav-bar">
               <Link className="Nav-item" to="/">PLAY</Link>
               <Link className="Nav-item" to="/create">CREATE</Link>
-              <Link className="Nav-item" to="/rankings">RANKINGS</Link>
               <div className="User-profile">
 
                 <div className="User-profile-data">
