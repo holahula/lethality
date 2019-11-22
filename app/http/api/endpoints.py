@@ -51,7 +51,7 @@ def next_puzzle(elo):
     closest_elo = min(puzzles, key=lambda x:abs(x["elo"]-elo))
     puzzle = PuzzleService().find_puzzle(closest_elo["puzzle_id"])
     if puzzle:
-        fill_puzzle_data(puzzle)
+        # fill_puzzle_data(puzzle)
         return json_response(puzzle)
     else:
         return json_response({"error": "no puzzles found (closest elo)"}, 404)
