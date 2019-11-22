@@ -1,4 +1,7 @@
+import Cards from '../Cards.json';
+
 const Axios = require('axios');
+const uuid = require('uuid/v4');
 
 /*
  * Action types
@@ -8,6 +11,11 @@ export const CHANGE_ELO = "CHANGE_ELO";
 export const REORDER_HAND = "REORDER_HAND";
 export const MOVED_TO_BENCH = "MOVED_TO_BENCH";
 export const MOVED_TO_BOARD = "MOVED_TO_BOARD";
+
+// ACTIONS FOR CREATING LETHAL
+export const CARD_MOVED = "MAKE_CARD_MOVED";
+export const CARD_ADDED = "MAKE_CARD_ADDED";
+export const CARD_REMOVED = "MAKE_CARD_REMOVED";
 
 export const HOVERED_OVER_CARD = "HOVERED_OVER_CARD";
 export const HOVERED_AWAY_FROM_CARD = "HOVERED_AWAY_FROM_CARD";;
@@ -25,6 +33,34 @@ export const ENDPOINT = "http://localhost:4433/";
  */
 
 
+ export function create_cardAdded(destination, card_id, board) {
+    return dispatch => {
+        console.log(destination, card_id, board);
+        // get card data
+        // add card to board
+            console.log(Cards[card_id]);
+            
+            switch(destination) {
+                case "player_bench":
+                    break;
+                case "opponent_bench":
+                    break;
+                case "opponent_board":
+                    break;
+                case "player_board":
+                    break;
+                default:
+                    return;
+            }
+    }
+ }
+ export function create_cardMoved(source, destination, card, board) {
+
+ }
+ export function create_cardRemoved(source, card, board) {
+
+ }
+
  export function signOut() {
      return {
         type: USER_SIGNED_OUT,
@@ -40,9 +76,24 @@ export const ENDPOINT = "http://localhost:4433/";
 
  export function userSignedIn(username) {
     return dispatch => {
+
+        // fetch("http://localhost:4433/user", {
+        //     method: 'get',
+        //     mode: 'cors',
+        // })
+
         console.log("sign in request");
         // get elo and "sign in"
-        Axios.post(ENDPOINT+'user/'+username)
+
+        let options = {
+            headers: { 'content-type': 'application/json' },
+            body: {
+                user_id: username,
+                elo: 1000,
+            }
+        }
+
+        Axios.post(ENDPOINT+'user/mogen')
         .then(login_res => {
             const username = login_res.data.username;
             const elo = login_res.data.elo;

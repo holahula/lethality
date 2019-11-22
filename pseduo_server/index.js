@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors');
 const app = express()
-const port = 4000
+const port = 4433
 const dd =  require('./data_dragon_raw.js');
 const uuidv4 = require('uuid/v4');
 
@@ -9,15 +9,8 @@ class DataDragon {
     
     randomCard() {
         let index = Math.round(Math.random()* dd.length);
-
         let card = dd[index];
-        
-        return {
-            card_id: card.cardCode,
-            uuid: uuidv4(),
-            effect_status: [],
-            hp: 4,
-        }
+        return {...card, uuid: uuidv4};
     }
 
 }
@@ -51,19 +44,7 @@ app.get('/puzzles/:elo', (req, res) => {
         "p_board": cardGenerator(0),
         "p_bench": cardGenerator(3),
         "hand": cardGenerator(8),
-        "spell_stack": [{
-            card_id: '01NX013',
-            uuid: '123',
-            effect_status: [],
-        },{
-            card_id: '01NX013',
-            uuid: '123',
-            effect_status: [],
-        },{
-            card_id: '01NX013',
-            uuid: '123',
-            effect_status: [],
-        }]
+        "spell_stack": cardGenerator(4)
     }
 
     res.status(200).send({

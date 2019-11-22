@@ -1,4 +1,5 @@
 #FLASK_APP=$PWD/app/http/api/endpoints.py FLASK_ENV=development python3 -m flask run --port=4433
+#FLASK_APP=$PWD/app/http/api/endpoints.py FLASK_ENV=development python -m flask run --port=4433
 
 from flask import Flask, json, g, request
 from app.idp.service import Service as IdentityService
@@ -13,6 +14,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 # https://www.netlify.com/
 
@@ -79,7 +81,7 @@ def update_puzzle_elo(puzzle_id, elo):
 
 # Requires: username:string
 # Returns: user: app.idp.user
-@app.route("/user/<string:username>", methods = ["GET", "POST"]) 
+@app.route("/user/<string:username>", methods = ["GET", "POST"])
 def user(username):
     #---WORKS---
     if request.method == 'GET':

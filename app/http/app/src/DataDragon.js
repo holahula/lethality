@@ -8,12 +8,7 @@ class DataDragon {
 
         let card = dd[index];
         
-        return {
-            card_id: card.cardCode,
-            uuid: uuidv4(),
-            effect_status: [],
-            hp: 4,
-        }
+        return card;
     }
 
 }
