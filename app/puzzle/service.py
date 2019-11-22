@@ -11,30 +11,29 @@ class Service:
         return [self.dump(puzzle) for puzzle in puzzles]
 
     def find_puzzle(self, puzzle_id):
-        puzzle = self.repo_client.find({'puzzle_id': puzzle_id})
+        puzzle = self.repo_client.find({"puzzle_id": puzzle_id})
         return self.dump(puzzle)
     
-    def create_puzzle(self, game_state):
-        self.repo_client.create(self.prepare_puzzle(game_state))
-        return self.dump(game_state.data)
+    def create_puzzle(self, puzzle_req):
+        puzzle = self.repo_client.create(self.prepare_puzzle(puzzle_req))
+        return self.dump(puzzle)
 
-    def update_puzzle(self, elo, game_state):
-        records_affected = self.repo.update({'puzzle_id': self.puzzle_id}, self.prepare_puzzle(game_state))
+    def update_puzzle(self, puzzle_req):
+        records_affected = self.repo_client.update({"puzzle_id": puzzle_req["puzzle_id"]}, self.prepare_puzzle(puzzle_req))
         return records_affected > 0
 
-    def delete_puzzle(self):
-        records_affected = self.repo_client.delete({'puzzle_id': self.puzzle_id})
+    def delete_puzzle(self, puzzle_id):
+        records_affected = self.repo_client.delete({"puzzle_id": puzzle_id})
         return records_affected > 0
     
     def dump(self, data):
-        # return PuzzleSchema(exclude=['_puzzle_id']).dump(data).data
         return PuzzleSchema().dump(data)
 
-    def prepare_puzzle(self, game_state):
-        data = game_state.data
-        data['puzzle_id'] = self.puzzle_id
-        data['elo'] = self.elo
-        return puzzle_id
+    def prepare_puzzle(self, puzzle_req):
+        data = puzzle_req
+        data["puzzle_id"] = puzzle_req["puzzle_id"]
+        data["elo"] = puzzle_req["elo"]
+        return data
 
 
     
