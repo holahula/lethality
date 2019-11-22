@@ -184,6 +184,7 @@ class Service(object):
 
     def unselect_attacker(self, game, action):
         # puts minion from field to bench
+        self.adjust_opponent_board(game, action)
         for card in game['p_board']:
             if card['uuid'] == action['uuid']:
                 # Remove the opposing cell in the enemy board
