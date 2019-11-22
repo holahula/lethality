@@ -154,7 +154,7 @@ def take_action():
     game = args["game"]
     action = args["action"]
     action_to_take = args["action_to_take"]
-    
+
     # game service instance
     g = Game()
     # get functions matching name of method given
