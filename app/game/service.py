@@ -108,9 +108,7 @@ class Service(object):
     #     'o_spell_mana': 3,
     #     'attack_token': True,
     #     'action_button_text': 'PASS',
-    #     'p_bench': [
-    #         {'uuid': '12345', 'cardCode': 'RITO'}
-    #     ],
+    #     'p_bench': [],
     #     'o_bench': [],
     #     'p_board': [],
     #     'o_board': [],
