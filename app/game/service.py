@@ -68,12 +68,21 @@ class Service(object):
                 elif 'Fearsome' in attacker['keywords'] and defender_attack < 3:
                     current_damage = float('Inf')
                 # This means there's no defenders, so attacker hits face
-                elif defender == None:
+                if defender == None:
                     current_damage += damage
-                # This means minion has overwhelming, apply overwhelming calculations
-                elif 'Overwhelm' in attacker['keywords']:
-                    defender_hp = defender['health'] + defender['health_delta']
-                    current_damage += (max(damage-defender_hp, 0))
+                else:
+                    defender_attack = defender['attack'] + defender['attack_delta']
+                    # We invalidate the scenarios where the defense wouldn't work because of attacker keywords
+                    # Really Scuffed, but if attacker is elusive and defender is not elusive, add alot to current damage
+                    if 'Elusive' in attacker['keywords'] and 'Elusive' not in defender['keywords']:
+                        current_damage = float('Inf')
+                    # Also super scuffed, but if attacker is fearsome and defender has less than 3 attack, add alot to current damage
+                    elif 'Fearsome' in attacker['keywords'] and defender_attack < 3:
+                        current_damage = float('Inf')
+                    # This means minion has overwhelming, apply overwhelming calculations
+                    elif 'Overwhelm' in attacker['keywords']:
+                        defender_hp = defender['health'] + defender['health_delta']
+                        current_damage += (max(damage-defender_hp, 0))
             # Store the current_damage to the all_possible_damage list
             all_possible_damage.append(current_damage)
             # Reset current damage
@@ -148,12 +157,12 @@ class Service(object):
             for card in game['p_bench']:
                 if card['uuid'] == action['uuid']:
                     game['p_board'].append(card)
-                    game['p_bench'].remove(card)
-                    # Adds an empty cell in the enemy board
-                    game['o_board'].append(None)
                     # Check if card has challenger
                     if "Challenger" in self.get_keywords(game, action) and action["targets"] != []:
                         self.challenger(game, action)
+                    game['p_bench'].remove(card)
+                    # Adds an empty cell in the enemy board
+                    game['o_board'].append(None)
 
     def unselect_attacker(self, game, action):
         # puts minion from field to bench
@@ -170,7 +179,7 @@ class Service(object):
         # Finds opposing card during battle phase
         area = action['area']
         for card in game[area]:
-            if game['uuid'] == action['uuid']:
+            if card['uuid'] == action['uuid']:
                 index = game[area].index(card)
                 if area == 'p_board':
                     return game['o_board'][index]
@@ -198,7 +207,8 @@ class Service(object):
                     self.quick_attack(game, action_data)
                 else:
                     self.standoff(game, action_data)
-                
+            self.unselect_attacker(game, action_data)  
+
         game['attack_token'] = False
 
     def pass_turn(self, game, action):
@@ -298,3 +308,4 @@ class Service(object):
 
     def cant_block(self, game, action):
         pass
+
