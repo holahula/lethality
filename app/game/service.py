@@ -119,6 +119,17 @@ class Service(object):
                 # Transfer action card from board to bench
                 game['p_board'].remove(card)
                 game['p_bench'].append(card)
+    
+    def find_opposing_card(self, game, action):
+        # Finds opposing card during battle phase
+        area = action['area']
+        for card in game[area]:
+            if game['uuid'] == action['uuid']:
+                index = game[area].index(card)
+                if area == 'p_board':
+                    return game['o_board'][index]
+                else:
+                    return game['p_board'][index]
 
     def attack_phase(self, game, action):
         # AI blocks highest attack minions
@@ -204,13 +215,12 @@ class Service(object):
         # works only on player side, attacks other card first before getting hit
         for card in game['p_board']:
             if card['uuid'] == action['uuid']:
-                index = game['p_board'].index(card)
-                # Finds opposing card and attacks it first
-                opposing_card = game['o_board'][index]
-                opposing_card['health_delta'] - = card['attack_delta']
+                # Finds opposing card of quick attacker
+                opposing_card = self.find_opposing_card(game, action)
+                opposing_card['health_delta'] -= card['attack_delta']
                 # If opposing card doesnt die, it attacks
                 if opposing_card['health_delta'] > 0:
-                    card['health_delta'] - = opposing_card['attack_delta']
+                    card['health_delta'] -= opposing_card['attack_delta']
 
     def tough(self, game, action):
         pass
