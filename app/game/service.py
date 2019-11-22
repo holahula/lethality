@@ -7,6 +7,7 @@ class Service(object):
     def check_mana(self, game, action):
         # Checks if you have the mana to play the card, returns boolean
         card_info = self.find_id(game, action)
+        # Find total cost of card
         card_mana = card_info["cost_delta"] + card_info['cost']
         available_mana = game["p_mana"]
         if card_info["spellSpeed"] != "":
@@ -39,11 +40,13 @@ class Service(object):
         all_possible_damage = []
         # Fill fake_board with bench cards, then fill the rest with None
         for card in game['o_bench']:
+            # Find total health of minion
             fake_board.append(card['health_delta'] + card['health'])
         for card in game['p_board']-len(game['o_bench']):
             fake_board.append(None)
         # Fill attack_board with attacking minions
         for card in game['p_board']:
+            # Find total attack of attacker
             attack_board.append(card['attack_delta'] + card['attack'])
             # If the minion is overwhelming, record it in is_overwhelming
             if 'overwhelm' in card['keywords']:
@@ -113,6 +116,7 @@ class Service(object):
         # puts minion onto bench array
         if self.check_mana(game, action):
             card_data = self.find_id(game, action)
+            # Subtract mana from total cost of minion
             game["p_mana"] -= (card_data["cost_delta"] + card_data["cost"])
             game["p_bench"].append(card_data)
             game['hand'].remove(card_data)
@@ -121,8 +125,10 @@ class Service(object):
         # puts spell onto spell stack
         if self.check_mana(game, action):
             card_data = self.find_id(game, action)
+            # Subtract spell mana from delta cost
             card_data["cost_delta"] -= game["p_spell_mana"]
             game["p_spell_mana"] = 0
+            # Subtract mana from total cost of spell
             game["p_mana"] -= (card_data["cost_delta"] + card_data['cost'])
             game["spell_stack"].append(card_data)
             game["hand"].remove(card_data)
@@ -192,6 +198,7 @@ class Service(object):
     def direct_hit(self, game, action):
         # When an attacking minion attacks nexus
         card = self.find_id(game, action)
+        # Find total damage of attacker
         dmg = card['attack'] + card['attack_delta']
         game['o_health'] -= dmg
 
@@ -213,7 +220,7 @@ class Service(object):
                 # Finds opposing card of overwhelmer
                 opposing_card = self.find_opposing_card(game, action)
                 # Apply overwhelm keyword effect
-                game['o_health'] -= max(0, card['attack'] + card['attack_delta'] - opposing_card['health'] + opposing_card['health_delta'])
+                game['o_health'] -= max(0, (card['attack'] + card['attack_delta']) - (opposing_card['health'] + opposing_card['health_delta']))
 
     def barrier(self, game, action):
         pass
@@ -257,9 +264,11 @@ class Service(object):
             if card['uuid'] == action['uuid']:
                 # Finds opposing card of quick attacker
                 opposing_card = self.find_opposing_card(game, action)
+                # Find total damage of quick attacker and apply to delta of defender
                 opposing_card['health_delta'] -= (card['attack_delta'] + card['attack'])
                 # If opposing card doesnt die, it attacks
                 if (opposing_card['health_delta'] + opposing_card['health']) > 0:
+                    # Find total damage of defender and apply to quick attacker
                     card['health_delta'] -= (opposing_card['attack_delta'] + opposing_card['attack'])
 
     def tough(self, game, action):
