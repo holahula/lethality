@@ -90,19 +90,7 @@ const initialState = {
         "p_board": cardGenerator(0),
         "p_bench": cardGenerator(0),
         "cards_in_hand": cardGenerator(10),
-        "spell_stack": [{
-            card_id: '01NX013',
-            uuid: '123',
-            effect_status: [],
-        },{
-            card_id: '01NX013',
-            uuid: '123',
-            effect_status: [],
-        },{
-            card_id: '01NX013',
-            uuid: '123',
-            effect_status: [],
-        }]
+        "spell_stack": cardGenerator(3),
     },
 
     custom_game_board: {
@@ -152,7 +140,6 @@ function lethalApp(state = initialState, action) {
                 username: action.username,
                 elo: action.elo,
                 isSignedIn: true,
-                game_state: action.game,
                 showWinScreen: false,
             });
         case HOVERED_AWAY_FROM_CARD:

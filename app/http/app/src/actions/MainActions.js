@@ -98,25 +98,29 @@ export const ENDPOINT = "http://localhost:4433/";
             const username = login_res.data.username;
             const elo = login_res.data.elo;
             
-            // get a puzzle
-            Axios.get(ENDPOINT+'puzzles/'+elo)
-            .then(puzzle_res => {
-                // parse puzzle
-                const game = puzzle_res.data.game;
-                console.log(game);
+            dispatch({
+                type: USER_SIGNED_IN,
+                username,
+                elo
+            });
 
-                // puzzle should be a game state
-                // rename hand to cards_in_hand
-                game.cards_in_hand = game.hand;
-
-                dispatch({
-                    type: USER_SIGNED_IN,
-                    username,
-                    elo,
-                    game
-                });
-
-            })
+            // // get a puzzle
+            // Axios.get(ENDPOINT+'puzzles/'+elo)
+            // .then(puzzle_res => {
+            //     // parse puzzle
+            //     const game = puzzle_res.data.game;
+            //     console.log("WAOSKDOWKAODOAWKDOAWKDOO")
+            //     console.log(game);
+            //     // puzzle should be a game state
+            //     // rename hand to cards_in_hand
+            //     game.cards_in_hand = game.hand;
+            //     dispatch({
+            //         type: USER_SIGNED_IN,
+            //         username,
+            //         elo,
+            //         game
+            //     });
+            // })
 
         })
 

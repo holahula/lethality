@@ -10,7 +10,8 @@ class DataDragon {
     randomCard() {
         let index = Math.round(Math.random()* dd.length);
         let card = dd[index];
-        return {...card, uuid: uuidv4};
+        card['uuid'] = uuidv4;
+        return card;
     }
 
 }

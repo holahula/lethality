@@ -58,8 +58,8 @@ function hoverOverCard(data, card, dispatch) {
 }
 
 function getHoverCardURL(hover) {
-    if (!hover.card.card_id) { return; }
-    const imgURL = "https://storage.googleapis.com/lethality/cards/" + hover.card.card_id + '-COMPRESSED.png';
+    if (!hover.card.cardCode) { return; }
+    const imgURL = "https://storage.googleapis.com/lethality/cards/" + hover.card.cardCode + '-COMPRESSED.png';
     return imgURL;
 }
 function getHoverCardStyle(hover) {
@@ -120,8 +120,8 @@ function draggingOverBoard(snapshot, board) {
 
 function renderPlayerBench(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
-        // let cardImage = require('../img/cards/' + card.card_id + '.png');
-        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
+        // let cardImage = require('../img/cards/' + card.cardCode + '.png');
+        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
         return (
             <Draggable key={card.uuid} index={index} draggableId={card.uuid}>
                 {(provided, snapshot) => (
@@ -161,8 +161,8 @@ function renderPlayerBench(cards, dispatch) {
 function renderPlayerHand(board, dispatch) {
     let cards = board.cards_in_hand
     let render_obj = cards.map( (card, index) => {
-        //let cardImage = require('../img/cards/' + card.card_id + '.png');
-        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
+        //let cardImage = require('../img/cards/' + card.cardCode + '.png');
+        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
         return (
             <Draggable key={card.uuid} index={index} draggableId={card.uuid}>
                 {(provided, snapshot) => (
@@ -229,8 +229,8 @@ function renderPlayerBoard(cards, dispatch) {
         }
     }
     let render_obj = cards.map( (card, index) => {
-        // let cardImage = require('../img/cards/' + card.card_id + '.png');
-        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
+        // let cardImage = require('../img/cards/' + card.cardCode + '.png');
+        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
         return (
             <Draggable key={card.uuid} index={index} draggableId={card.uuid}>
                 {(provided, snapshot) => (
@@ -279,8 +279,8 @@ function emptyDraggable() {
 
 function renderOpponentBench(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
-        //let cardImage = require('../img/cards/' + card.card_id + '.png');
-        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
+        //let cardImage = require('../img/cards/' + card.cardCode + '.png');
+        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
         return <img index={index} src={cardImage} className="Bench-card No-grab"
             key={index}
             onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
@@ -293,8 +293,8 @@ function renderOpponentBench(cards, dispatch) {
 
 function renderOpponentBoard(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
-        //let cardImage = require('../img/cards/' + card.card_id + '.png');
-        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '-sm.png';
+        //let cardImage = require('../img/cards/' + card.cardCode + '.png');
+        let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
         return <img index={index} src={cardImage} className="Board-card No-grab"
             onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
             onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
@@ -306,7 +306,7 @@ function renderOpponentBoard(cards, dispatch) {
 
 function renderSpells(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
-        const url = "https://storage.googleapis.com/lethality/cards/" + card.card_id + '.png';
+        const url = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '.png';
         return (
             <img key={index} className="One-spell" index={index} src={url}
                 onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
@@ -498,11 +498,12 @@ function Create({game_state, dispatch}) {
                         <div className="Player">
                                 <Droppable droppableId="player_board" direction="horizontal">
                                     {(provided, snapshot) => (
+
                                         <div className="Player-board">
 
                                             <div className="Player-board-overlay"style={draggingOverBoard(snapshot, board)}>
                                                 <span className="Player-board-overlay-text">&uarr; PLAY CARD &uarr;</span>
-                                            </div>*
+                                            </div>
                                             
                                             <div className="Player-board-main">
                                                 <span className="Description-font">PLAYER BOARD</span>
