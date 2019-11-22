@@ -309,9 +309,9 @@ class Service(object):
                 attack = card['attack']
                 # Heal for how much attack delta on the lifesteal card is
                 if area == 'o_board':
-                    game['o_health'] = max(20, game['o_health'] + attack_delta + attack)
+                    game['o_health'] = min(20, game['o_health'] + attack_delta + attack)
                 else:
-                    game['p_health'] = max(20, game['p_health'] + attack_delta + attack)
+                    game['p_health'] = min(20, game['p_health'] + attack_delta + attack)
 
     def challenger(self, game, action):
         # Find the card I'm challenging, find the index of the challenger
