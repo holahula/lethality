@@ -52,7 +52,7 @@ class Service(object):
     #     'p_mana': 10,
     #     'o_mana': 10,
     #     'p_spell_mana': 3,
-    #     'o_speel_mana': 3,
+    #     'o_spell_mana': 3,
     #     'attack_token': True,
     #     'action_button_text': 'PASS',
     #     'p_bench': [
