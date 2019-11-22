@@ -94,26 +94,11 @@ def puzzle_functions():
     else:
         return json_response({"error": "puzzle not found"}, 404)
 
-<<<<<<< HEAD
-    # MASTER
-    # puzzle_service = PuzzleService()
-
-    # if request.method == "POST":
-    #     puzzle = PuzzleService().create_puzzle(puzzle_req)
-    #     return json_response({"success": "puzzle created - " + str(puzzle_req["puzzle_id"])}, 200)
-
-    # elif request.method == "PUT":
-    #     if puzzle_service.update_puzzle(puzzle_req):
-    #         return json_response({"success": "puzzle updated"}, 200)
-    #     else:
-    #         return json_response({"error": "puzzle not found"}, 404)
-=======
     elif request.method == "PUT":
         if puzzle_service.update_puzzle(puzzle_req):
             return json_response({"success": "puzzle updated"}, 200)
         else:
             return json_response({"error": "puzzle not found"}, 404)
->>>>>>> master
 
 # Requires: user_id:string
 # Returns: user: app.idp.user
@@ -160,13 +145,6 @@ def user_functions():
         else:
             return json_response({"error": "user not found"}, 404)
 
-<<<<<<< HEAD
-    elif request.method == "DELETE":
-        if identity_service.delete_user(user_req):
-            return json_response({"success": "user deleted"}, 200)
-        else:
-            return json_response({"error": "user not found"}, 404)
-=======
 @app.route("/action", methods = ["POST"])
 def take_action():
     args = json.loads(request.data)
@@ -182,7 +160,6 @@ def take_action():
     f(game, action)
     # return mutated game object
     return json_response(game)
->>>>>>> master
 
 # POST:
 # game:
