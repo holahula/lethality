@@ -68,7 +68,7 @@ def puzzle_functions():
 
     if request.method == "POST":
         puzzle = PuzzleService().create_puzzle(puzzle_req)
-        return json_response(puzzle)
+        return json_response({"success": "puzzle created - " + str(puzzle_req["puzzle_id"])}, 200)
 
     elif request.method == "PUT":
         if puzzle_service.update_puzzle(puzzle_req):
@@ -108,7 +108,7 @@ def user_functions():
 
     if request.method == "POST":
         user = identity_service.create_user(user_req)
-        return json_response(user)
+        return json_response({"success": "user created - " + user_req["user_id"]}, 200)
 
     elif request.method == "PUT":
         if identity_service.update_user(user_req):
