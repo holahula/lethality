@@ -11,9 +11,8 @@ class Service(object):
 
     def check_mana(self, game, action):
         # Checks if you have the mana to play the card, returns boolean
-        cardCode = self.find_id(game, action)
-        card_info = self.get_card_data(cardCode)
-        card_mana = card_info["cost"]
+        card_info = self.find_id(game, action)
+        card_mana = card_info["cost_delta"]
         available_mana = game["p_mana"]
         if card_info["spellSpeed"] != "":
             available_mana += game["p_spell_mana"]
@@ -28,12 +27,14 @@ class Service(object):
         area = action["area"]
         for card in game[area]:
             if card["uuid"] == uuid:
-                return card["cardCode"]
+                return card
     
     def get_keywords(self, game, action):
-        cardCode = self.find_id(game, action)
-        card_info = self.get_card_data(cardCode)
+        card_info = self.find_id(game, action)
         return card_info["keywords"]
+    
+    def block_AI(self, game, action):
+        pass
 
     # 1-to-1 matching with easy endpoints for mogen
     # dragged_to_bench
@@ -74,26 +75,20 @@ class Service(object):
     def play_minion(self, game, action):
         # puts minion onto bench array
         if self.check_mana(game, action):
-            for card in game["hand"]:
-                if card["uuid"] == action["uuid"]:
-                    # Get the wanted card_data, use up its mana and move it to the bench
-                    card_data = self.get_card_data(card["cardCode"])
-                    game["p_mana"] -= card_data["cost"]
-                    game["p_bench"].append(card)
-                    game['hand'].remove(card)
+            card_data = self.find_id(game, action)
+            game["p_mana"] -= card_data["cost_delta"]
+            game["p_bench"].append(card_data)
+            game['hand'].remove(card_data)
 
     def play_spell(self, game, action):
         # puts spell onto spell stack
         if self.check_mana(game, action):
-            for card in game["hand"]:
-                if card["uuid"] == action["uuid"]:
-                    # Remove spell mana first, then use normal mana, remove card from hand and put to spell stack
-                    card_data = self.get_card_data(card["cardCode"])
-                    card_data["cost"] -= game["p_spell_mana"]
-                    game["p_spell_mana"] = 0
-                    game["p_mana"] -= card_data["cost"]
-                    game["spell_stack"].append(card)
-                    game["hand"].remove(card)
+            card_data = self.find_id(game, action)
+            card_data["cost_delta"] -= game["p_spell_mana"]
+            game["p_spell_mana"] = 0
+            game["p_mana"] -= card_data["cost_delta"]
+            game["spell_stack"].append(card_data)
+            game["hand"].remove(card_data)
                     
 
     def choose_attacker(self, game, action):
@@ -154,6 +149,7 @@ class Service(object):
 
     def standoff(self, game, action):
         # When an attacking minion faces an enemy minion
+        # Check if minion has quick attack first, then check everything else
         pass
 
     def direct_hit(self, game, action):
