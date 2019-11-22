@@ -3,12 +3,6 @@ import json
 
 class Service(object):
 
-    def get_card_data(self, cardCode):
-        # Gets card data, converts to json
-        r = requests.get(f"https://storage.googleapis.com/lethality/card_data/{cardCode}.json")
-        obj = json.loads(r.text)
-        return obj
-
     def check_mana(self, game, action):
         # Checks if you have the mana to play the card, returns boolean
         card_info = self.find_id(game, action)

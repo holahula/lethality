@@ -16,14 +16,31 @@ CORS(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-# https://www.netlify.com/
+def get_card_data(card_id):
+    # Gets card data, converts to json
+    r = requests.get(f"https://storage.googleapis.com/lethality/card_data/{cardCode}.json")
+    obj = json.loads(r.text)
+    return obj
+
+def fill_puzzle_data(puzzle):
+    for area in ['hand', 'p_bench', 'o_bench', 'p_board', 'o_board']:
+        for i in range(len(puzzle['area'])):
+            card = puzzle['area'][i]
+            if card is not None:
+                card_data = get_card_data(card.card_id)
+                card_data['uuid'] = card.card_id
+                card_data['attack_delta'] = 0
+                card_data['cost_delta'] = 0
+                card_data['health_delta'] = 0
+                puzzle['area'][i] = card_data
 
 # https://developer.okta.com/blog/2018/12/20/crud-app-with-python-flask-react
+
 @app.route("/", methods = ["GET"])
 def entry():
     return json_response({"yes": "no"}, 200)
-# Returns the next puzzle based on elo
 
+# Returns the next puzzle based on elo
 @app.route("/puzzles/<int:elo>", methods = ["GET"])
 def next_puzzle(elo):
     puzzles = PuzzleService().find_all_puzzles()
@@ -34,6 +51,7 @@ def next_puzzle(elo):
     closest_elo = min(puzzles, key=lambda x:abs(x["elo"]-elo))
     puzzle = PuzzleService().find_puzzle(closest_elo["puzzle_id"])
     if puzzle:
+        fill_puzzle_data(puzzle)
         return json_response(puzzle)
     else:
         return json_response({"error": "no puzzles found (closest elo)"}, 404)
@@ -44,6 +62,7 @@ def puzzle_functions(puzzle_id):
         puzzle = PuzzleService().find_puzzle(puzzle_id)
 
         if puzzle:
+            fill_puzzle_data(puzzle)
             return json_response(puzzle)
         else:
             return json_response({"error": "no puzzles found"}, 404)
@@ -53,7 +72,7 @@ def puzzle_functions(puzzle_id):
 
         if puzzle_req.errors:
             return json_response({"error": puzzle_req.errors}, 422)
-            
+
         puzzle = PuzzleService().create_puzzle(puzzle_req)
         return json_response(puzzle)
 
@@ -70,11 +89,11 @@ def update_puzzle_elo(puzzle_id, elo):
 
     if puzzle_req.errors:
         return json_response({"error": puzzle_req.errorss})
-    
+
     puzzle_service=PuzzleService()
     if puzzle_service.update_puzzle(elo, puzzle_req):
         return json_response(puzzle_service.data)
-    else: 
+    else:
         return json_response({"error": "puzzle not found"}, 404)
 
 # Requires: user_id:string
@@ -94,7 +113,7 @@ def user_functions():
             return json_response(user)
         else:
             return json_response({"error": "user not found"}, 404)
-    
+
     elif request.method == "POST":
         user = identity_service.create_user(user_req)
         return json_response(user)
@@ -110,7 +129,7 @@ def user_functions():
             return json_response({"success": "user deleted"}, 200)
         else:
             return json_response({"error": "user not found"}, 404)
-            
+
 # POST:
 # {
 #   game_state
@@ -133,7 +152,7 @@ def user_functions():
 
 # @app.route("/action/dragged_to_bench", methods = ["POST"])
 # def process_move():
-    
+
 # @app.route("/action/enemies_selected", methods = ["POST"])
 # @app.route("/action/dragged_to_board", methods = ["POST"])
 # @app.route("/action/passed", methods = ["POST"])
@@ -144,14 +163,14 @@ def user_functions():
 # @app.route("/leaderboards", methods = ["GET"])
 
 
-# ____                   
-# /    \			
-#   u  u|      _______    
-#     \ |  .-""#%&#&%#``-.   
-#    = /  ((%&#&#&%&VK&%&))  
-#     |    `-._#%&##&%_.-"   
+# ____
+# /    \
+#   u  u|      _______
+#     \ |  .-""#%&#&%#``-.
+#    = /  ((%&#&#&%&VK&%&))
+#     |    `-._#%&##&%_.-"
 #  /\/\`--.   `-."".-"
-#  |  |    \   /`./          
+#  |  |    \   /`./
 #  |\/|  \  `-"  /
 #  || |   \     /            VK
 

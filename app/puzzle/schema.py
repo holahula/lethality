@@ -16,13 +16,15 @@ class GameStateSchema(Schema):
 
     action_button_text = fields.Str()
 
+    hand = fields.Nested(CardSchema())
+
     p_bench = fields.Nested(CardSchema())
     o_bench = fields.Nested(CardSchema())
     p_board = fields.Nested(CardSchema())
     o_board = fields.Nested(CardSchema())
 
     spell_stack = fields.Nested(CardSchema())
-    
+
 class PuzzleSchema(GameStateSchema):
     puzzle_id = fields.Int(required=True)
     elo = fields.Int()
