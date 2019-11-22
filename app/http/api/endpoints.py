@@ -152,10 +152,11 @@ def take_action():
     # game service instance
     g = Game()
     # get functions matching name of method given
-    f = getattr(g, method)
+    # f = getattr(g, method)
     # call with game and action
-    f(game, action)
+    # f(game, action)
     # return mutated game object
+    g.command(game, action, method)
     return json_response(game)
 
 # POST:

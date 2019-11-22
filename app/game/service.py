@@ -4,6 +4,18 @@ import itertools
 
 class Service(object):
 
+    def command(self, game, action, action_to_take):
+        if action_to_take == "attack_phase":
+            self.attack_phase(game, action)
+        elif action_to_take == "choose_attacker":
+            self.choose_attacker(game, action)
+        elif action_to_take == "play_minion":
+            self.play_minion(game, action)
+        elif action_to_take == 'play_spell':
+            self.play_spell(game, action)
+        elif action_to_take == 'unselect_attacker':
+            self.unselect_attacker(game, action)
+
     def check_mana(self, game, action):
         # Checks if you have the mana to play the card, returns boolean
         card_info = self.find_id(game, action)
