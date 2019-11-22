@@ -144,7 +144,7 @@ class Service(object):
 
     def choose_attacker(self, game, action):
         # puts minion from bench to field
-        if game['attack token']:
+        if game['attack_token']:
             for card in game['p_bench']:
                 if card['uuid'] == action['uuid']:
                     game['p_board'].append(card)
@@ -186,22 +186,32 @@ class Service(object):
             # Updates action for each individual minion
             action_data = {'uuid': card['uuid'], 'targets': [], 'area': 'p_board'}
             # Attack face if no defending minion
+            opposing_field = game['o_board'][index]
             if game['o_board'][index] is None:
                 self.direct_hit(game, action_data)
-            # Special Quick Attack case
-            elif "Quick Attack" in card['keywords']:
-                self.quick_attack(game, action_data)
-            # Every other case
             else:
-                self.standoff(game, action_data)
+                if "Barrier" in card['keywords']:
+                    self.barrier(game, action_data)
+                elif 'Tough' in card['keywords'] and (opposing_field['attack']+opposing_field['attack_delta'] > 0):
+                    self.tough(game, action_data)
+                if 'Quick Attack'in card['keywords']:
+                    self.quick_attack(game, action_data)
+                else:
+                    self.standoff(game, action_data)
+                
+        game['attack_token'] = False
 
     def pass_turn(self, game, action):
         pass
 
     def standoff(self, game, action):
         # When an attacking minion faces an enemy minion
-        # This is where you check if they have barrier or tough
-        pass
+        opposing_card = self.find_opposing_card(game, action)
+        card = self.find_id(game, action)
+        attacker_dmg = card['attack'] + card['attack_delta']
+        opposing_dmg = opposing_card['attack'] + opposing_card['attack_delta']
+        card['health_delta'] -= opposing_dmg
+        opposing_card['health_delta'] -= attacker_dmg
 
     def direct_hit(self, game, action):
         # When an attacking minion attacks nexus
@@ -226,6 +236,10 @@ class Service(object):
 
     def barrier(self, game, action):
         # Negate the first damage done to it
+        opposing_card = self.find_opposing_card(game, action)
+        opposing_dmg = opposing_card['attack'] + opposing_card['attack_delta']
+        card = self.find_id(game, action)
+        card['health_delta'] += opposing_dmg
         pass
 
     def elusive(self, game, action):
@@ -249,7 +263,9 @@ class Service(object):
 
     def tough(self, game, action):
         # Take one less damage from all sources
-        pass
+        for card in game[action['area']]:
+            if card['uuid'] == action['uuid']:
+                card['health_delta'] += 1
 
     def regeneration(self, game, action):
         pass
