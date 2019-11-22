@@ -62,11 +62,11 @@ export const CREATE_BUTTON_PRESSED = "CREATE_BUTTON_PRESSED";
         //     mode: 'cors',
         // })
 
-        dispatch({
-            type: USER_SIGNED_IN,
-            username,
-            elo: 1000,
-        });
+        // dispatch({
+        //     type: USER_SIGNED_IN,
+        //     username,
+        //     elo: 1000,
+        // });
 
         const options = {params: {user_id: username}};
 
