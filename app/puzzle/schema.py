@@ -46,7 +46,6 @@ class GameStateSchema(Schema):
     action_button_text = fields.Str()
 
     hand = fields.List(fields.Nested(CardSchema()))
-
     p_bench = fields.List(fields.Nested(CardSchema()))
     o_bench = fields.List(fields.Nested(CardSchema()))
     p_board = fields.List(fields.Nested(CardSchema()))

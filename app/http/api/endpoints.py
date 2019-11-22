@@ -11,29 +11,34 @@ from flask_cors import CORS
 
 from marshmallow import ValidationError
 
+import requests
+
 app = Flask(__name__)
 CORS(app)
 
-app.config['CORS_HEADERS'] = 'Content-Type'
+app.config["CORS_HEADERS"] = "Content-Type"
 
-def get_card_data(card_id):
+def get_card_data(cardCode):
     # Gets card data, converts to json
     r = requests.get(f"https://storage.googleapis.com/lethality/card_data/{cardCode}.json")
     obj = json.loads(r.text)
     return obj
 
 def fill_puzzle_data(puzzle):
-    for area_name in ['hand', 'p_bench', 'o_bench', 'p_board', 'o_board']:
-        area = getattr(puzzle, area_name)
-        for i in range(len(area)):
-            card = area[i]
-            if card is not None:
-                card_data = get_card_data(card.card_id)
-                card_data['uuid'] = card.card_id
-                card_data['attack_delta'] = 0
-                card_data['cost_delta'] = 0
-                card_data['health_delta'] = 0
-                area[i] = card_data
+    for area_name in ["hand", "p_bench", "o_bench", "p_board", "o_board"]:
+        try:
+            area = puzzle.get(area_name)
+            for i in range(len(area)):
+                card = area[i]
+                if card is not None:
+                    card_data = get_card_data(card["cardCode"])
+                    card_data["uuid"] = card["uuid"]
+                    card_data["attack_delta"] = 0
+                    card_data["cost_delta"] = 0
+                    card_data["health_delta"] = 0
+                    area[i] = card_data
+        except AttributeError as error:
+            print("ERROR:", error, area_name)
 
 # https://developer.okta.com/blog/2018/12/20/crud-app-with-python-flask-react
 
@@ -57,7 +62,7 @@ def next_puzzle(elo):
     else:
         return json_response({"error": "no puzzles found (closest elo)"}, 404)
 
-@app.route("/puzzle/<int:puzzle_id>", methods = ["GET", "DELETE"])
+@app.route("/puzzle/<string:puzzle_id>", methods = ["GET", "DELETE"])
 def puzzle(puzzle_id):
     puzzle_service = PuzzleService()
 
@@ -138,9 +143,9 @@ def user_functions():
 def take_action():
     args = json.loads(request.data)
     # getting necessary objects
-    game = args['game']
-    action = args['action']
-    method = args['method']
+    game = args["game"]
+    action = args["action"]
+    method = args["method"]
     # game service instance
     g = Game()
     # get functions matching name of method given
@@ -153,28 +158,28 @@ def take_action():
 # POST:
 # game:
 # {
-#     'p_health': 20,
-#     'o_health': 20,
-#     'p_mana': 10,
-#     'o_mana': 10,
-#     'p_spell_mana': 3,
-#     'o_spell_mana': 3,
-#     'attack_token': True,
-#     'action_button_text': 'PASS',
-#     'p_bench': [
+#     "p_health": 20,
+#     "o_health": 20,
+#     "p_mana": 10,
+#     "o_mana": 10,
+#     "p_spell_mana": 3,
+#     "o_spell_mana": 3,
+#     "attack_token": True,
+#     "action_button_text": "PASS",
+#     "p_bench": [
 #         `card data dictionaries`
 #     ],
-#     'o_bench': [],
-#     'p_board': [],
-#     'o_board': [],
-#     'hand': [],
-#     'spell_stack': []
+#     "o_bench": [],
+#     "p_board": [],
+#     "o_board": [],
+#     "hand": [],
+#     "spell_stack": []
 # }
 # action:
 # {
-#     'uuid': '12345',
-#     'targets': [],
-#     'area': 'p_bench'
+#     "uuid": "12345",
+#     "targets": [],
+#     "area": "p_bench"
 # }
 # method:
 # "play_minion" OR "play_spell", any name of method in Game
@@ -182,22 +187,22 @@ def take_action():
 # RESPONSE:
 # game:
 # {
-#     'p_health': 20,
-#     'o_health': 20,
-#     'p_mana': 10,
-#     'o_mana': 10,
-#     'p_spell_mana': 3,
-#     'o_spell_mana': 3,
-#     'attack_token': True,
-#     'action_button_text': 'PASS',
-#     'p_bench': [
+#     "p_health": 20,
+#     "o_health": 20,
+#     "p_mana": 10,
+#     "o_mana": 10,
+#     "p_spell_mana": 3,
+#     "o_spell_mana": 3,
+#     "attack_token": True,
+#     "action_button_text": "PASS",
+#     "p_bench": [
 #         `card data dictionaries`
 #     ],
-#     'o_bench': [],
-#     'p_board': [],
-#     'o_board': [],
-#     'hand': [],
-#     'spell_stack': []
+#     "o_bench": [],
+#     "p_board": [],
+#     "o_board": [],
+#     "hand": [],
+#     "spell_stack": []
 # }
 
 # ____
