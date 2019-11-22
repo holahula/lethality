@@ -1,7 +1,8 @@
 import json
 
-cards = json.loads(open('${PWD}/cards.json').read())
+cards = json.loads(open('/Users/austinjiang/Documents/git/personal/lethality/scripts/cards.json').read())
 
+print(len(cards))
 # print(cards[0])
 
 for card in cards:
