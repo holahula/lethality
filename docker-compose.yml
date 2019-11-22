@@ -1,4 +1,8 @@
 version: '3'
+
+networks:
+  net:
+
 services:
   mongo:
     image: mongo
@@ -8,6 +12,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongo_user
       MONGO_INITDB_ROOT_PASSWORD: mongo_secret
+    networks:
+      - net
   lethality-be:
     image: lethality-be
     restart: always
@@ -18,8 +24,8 @@ services:
       DATABASE_USERNAME: mongo_user
       DATABASE_PASSWORD: mongo_secret
       MONGO_URL: mongodb://mongo_user:mongo_secret@mongo:27017
-    links: 
-      - mongo
+    networks: 
+      - net
     depends_on: 
       - mongo
   lethality-fe:
@@ -27,8 +33,8 @@ services:
     restart: always
     ports:
       - "3000:3000"
-    links:
-      - lethality-be
+    networks:
+      - net
     depends_on:
       - lethality-be
 

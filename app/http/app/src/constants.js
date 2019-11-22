@@ -1,1 +1,1 @@
-export const ENDPOINT = "http://lethality-be:4433/";
+export const ENDPOINT = "http://localhost:4433/";
