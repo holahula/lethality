@@ -173,7 +173,12 @@ class Service(object):
         pass
 
     def overwhelm(self, game, action):
-        pass
+        for card in game['p_board']:
+            if card['uuid'] == action['uuid']:
+                # Finds opposing card of overwhelmer
+                opposing_card = self.find_opposing_card(game, action)
+                # Apply overwhelm keyword effect
+                game['o_health'] -= max(0, card['delta_attack'] - opposing_card['delta_health'])
 
     def barrier(self, game, action):
         pass
