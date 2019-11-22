@@ -1,1 +1,1 @@
-export const ENDPOINT = "http://3b94019e.ngrok.io/";
+export const ENDPOINT = "http://lethality-be:4433/";

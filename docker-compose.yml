@@ -7,9 +7,9 @@ services:
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongo_user
-      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_ROOT_PASSWORD: mongo_secret
   lethality-be:
-    image: lethality
+    image: lethality-be
     restart: always
     ports:
       - "4433:4433"
@@ -22,5 +22,16 @@ services:
       - mongo
     depends_on: 
       - mongo
+  lethality-fe:
+    image: lethality-fe
+    restart: always
+    ports:
+      - "3000:3000"
+    links:
+      - lethality-be
+    depends_on:
+      - lethality-be
+
+    
 # export MONGO_URL=mongodb://admin:admin@0.0.0.0:27017
 #FLASK_APP=$PWD/app/http/api/endpoints.py FLASK_ENV=development python3 -m flask run --port=4433
