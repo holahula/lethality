@@ -7,6 +7,10 @@ class AssetSchema(Schema):
 class CardSchema(Schema):
     cardCode = fields.Str()
     uuid = fields.Str()
+    health_delta = fields.Int()
+    cost_delta = fields.Int()
+    attack_delta = fields.Int()
+
     associatedCards = fields.List(fields.Str())
     associatedCardRefs = fields.List(fields.Str())
     assets = fields.List(fields.Nested(AssetSchema()))
