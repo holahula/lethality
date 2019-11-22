@@ -208,6 +208,7 @@ class Service(object):
 
     def attack_phase(self, game, action):
         # AI blocks
+        self.adjust_opponent_board(game, action)
         self.block_AI(game, action)
         # Goes through every single attacking minion
         for card in game['p_board']:
