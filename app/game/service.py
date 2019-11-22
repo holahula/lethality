@@ -4,6 +4,18 @@ import itertools
 
 class Service(object):
 
+    def command(self, game, action, action_to_take):
+        if action_to_take == "attack_phase":
+            self.attack_phase(game, action)
+        elif action_to_take == "choose_attacker":
+            self.choose_attacker(game, action)
+        elif action_to_take == "play_minion":
+            self.play_minion(game, action)
+        elif action_to_take == 'play_spell':
+            self.play_spell(game, action)
+        elif action_to_take == 'unselect_attacker':
+            self.unselect_attacker(game, action)
+
     def check_mana(self, game, action):
         # Checks if you have the mana to play the card, returns boolean
         card_info = self.find_id(game, action)
@@ -59,14 +71,6 @@ class Service(object):
                 index = combinations.index(defender)
                 attacker = attack_board[index]
                 damage = attacker['attack'] + attacker['attack_delta']
-                defender_attack = defender['attack'] + defender['attack_delta']
-                # We invalidate the scenarios where the defense wouldn't work because of attacker keywords
-                # Really Scuffed, but if attacker is elusive and defender is not elusive, add alot to current damage
-                if 'Elusive' in attacker['keywords'] and 'Elusive' not in defender['keywords']:
-                    current_damage = float('Inf')
-                # Also super scuffed, but if attacker is fearsome and defender has less than 3 attack, add alot to current damage
-                elif 'Fearsome' in attacker['keywords'] and defender_attack < 3:
-                    current_damage = float('Inf')
                 # This means there's no defenders, so attacker hits face
                 if defender == None:
                     current_damage += damage
@@ -150,6 +154,12 @@ class Service(object):
             game["p_mana"] -= (card_data["cost_delta"] + card_data['cost'])
             game["spell_stack"].append(card_data)
             game["hand"].remove(card_data)
+    
+    def adjust_opponent_board(self, game, action):
+        while len(game['p_board']) > len(game['o_board']):
+            game['o_board'].append(None)
+        while len(game['p_board']) < len(game['o_board']):
+            game['o_board'].remove(None)
 
     def choose_attacker(self, game, action):
         # puts minion from bench to field
@@ -162,10 +172,11 @@ class Service(object):
                         self.challenger(game, action)
                     game['p_bench'].remove(card)
                     # Adds an empty cell in the enemy board
-                    game['o_board'].append(None)
+                    self.adjust_opponent_board(game, action)
 
     def unselect_attacker(self, game, action):
         # puts minion from field to bench
+        self.adjust_opponent_board(game, action)
         for card in game['p_board']:
             if card['uuid'] == action['uuid']:
                 # Remove the opposing cell in the enemy board
@@ -174,7 +185,8 @@ class Service(object):
                 # Transfer action card from board to bench
                 game['p_board'].remove(card)
                 game['p_bench'].append(card)
-
+        self.adjust_opponent_board(game, action)
+ 
     def find_opposing_card(self, game, action):
         # Finds opposing card during battle phase
         area = action['area']
@@ -188,6 +200,7 @@ class Service(object):
 
     def attack_phase(self, game, action):
         # AI blocks
+        self.adjust_opponent_board(game, action)
         self.block_AI(game, action)
         # Goes through every single attacking minion
         for card in game['p_board']:
@@ -203,6 +216,8 @@ class Service(object):
                     self.barrier(game, action_data)
                 elif 'Tough' in card['keywords'] and (opposing_field['attack']+opposing_field['attack_delta'] > 0):
                     self.tough(game, action_data)
+                if 'Life Steal' in card['keywords']:
+                    self.life_steal(game, action_data)
                 if 'Quick Attack'in card['keywords']:
                     self.quick_attack(game, action_data)
                 else:
@@ -289,9 +304,9 @@ class Service(object):
                 attack = card['attack']
                 # Heal for how much attack delta on the lifesteal card is
                 if area == 'o_board':
-                    game['o_health'] = max(20, game['o_health'] + attack_delta + attack)
+                    game['o_health'] = min(20, game['o_health'] + attack_delta + attack)
                 else:
-                    game['p_health'] = max(20, game['p_health'] + attack_delta + attack)
+                    game['p_health'] = min(20, game['p_health'] + attack_delta + attack)
 
     def challenger(self, game, action):
         # Find the card I'm challenging, find the index of the challenger
