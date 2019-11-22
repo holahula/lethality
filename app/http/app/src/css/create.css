@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css?family=Reem+Kufi&display=swap');
+
+.Field-input{
+    margin-top: 0;
+    width: 60px;
+    height: 60px;
+    font-size: 40px;
+}
+.Button-submit {
+    margin-top: 30px;
+    width: 600px;
+    height: 60px;
+    background-color: #FFA800;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: "Reem Kufi";
+    font-size: 30px;
+}
+.input-header{
+    font-family: "Reem Kufi";
+}
+.Overlay-table{
+    padding: 20px;
+    text-align: center;
+}
+.WindowBG{
+    width: 600px;
+    height: 400px;
+    background-image: url('../img/victory_bg.jpg');
+    background-size: cover;
+
+    display: flex;
+    flex-direction: column;
+}
+.Overlay-Header{
+    Font-size: 26px;
+    margin: 20px;
+    font-family: "Reem Kufi";
+}
+
+.Create-overlay{
+    position: absolute;
+    width: 100%;
+    height: 80%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 90909;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.Right-col{
+    width: 60px;
+    height: 240px;
+    display: flex;
+    background-color: #FFA800;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.Right-col:hover{
+    background-color: rgb(255, 145, 0);
+}
+
+.Create-btn {
+    width: 40px;
+}
+
+.Card-library {
+    background-color: rgba(37, 42, 56, 0.548);
+    width: 220px;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+.Card-library-title{
+    font-family: "Reem Kufi";
+    color: rgb(255, 255, 255);
+    cursor: default;
+    font-size: 16px;
+
+    margin: 10px;
+
+    filter: drop-shadow(0px 2px 2px rgb(0, 0, 0, 0.5));
+}
+
+.Card-library-list{
+    width: 200px;
+    height: 90%;
+    margin-left: 10px;
+    display: block;
+    overflow-y: scroll;
+}
+
+.Card-library-card{
+    width: 80px;
+    height: 120px;
+
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+
+.Game-columns-override {
+    justify-content: space-between;
+}
