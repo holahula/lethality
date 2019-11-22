@@ -63,10 +63,10 @@ class Service(object):
                 # We invalidate the scenarios where the defense wouldn't work because of attacker keywords
                 # Really Scuffed, but if attacker is elusive and defender is not elusive, add alot to current damage
                 if 'Elusive' in attacker['keywords'] and 'Elusive' not in defender['keywords']:
-                    current_damage += 1000000
+                    current_damage = float('Inf')
                 # Also super scuffed, but if attacker is fearsome and defender has less than 3 attack, add alot to current damage
                 elif 'Fearsome' in attacker['keywords'] and defender_attack < 3:
-                    current_damage += 1000000
+                    current_damage = float('Inf')
                 # This means there's no defenders, so attacker hits face
                 elif defender == None:
                     current_damage += damage
