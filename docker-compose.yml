@@ -1,0 +1,13 @@
+version: '3'
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+     - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+
+# export MONGO_URL=mongodb://admin:admin@0.0.0.0:27017
+#FLASK_APP=$PWD/app/http/api/endpoints.py FLASK_ENV=development python3 -m flask run --port=4433

@@ -6,7 +6,7 @@ COLLECTION_NAME = 'PUZZLES'
 class MongoPuzzleRepository(object):
     def __init__(self):
         mongo_url = os.environ.get('MONGO_URL')
-        sefl.db = MongoClient(mongo_url).puzzles
+        self.db = MongoClient(mongo_url).puzzles
     
     def find_all(self, selector):
         return self.db.puzzles.find(selector)
