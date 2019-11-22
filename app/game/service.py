@@ -7,7 +7,7 @@ class Service(object):
     def check_mana(self, game, action):
         # Checks if you have the mana to play the card, returns boolean
         card_info = self.find_id(game, action)
-        card_mana = card_info["cost_delta"]
+        card_mana = card_info["cost_delta"] + card_info['cost']
         available_mana = game["p_mana"]
         if card_info["spellSpeed"] != "":
             available_mana += game["p_spell_mana"]
@@ -39,12 +39,12 @@ class Service(object):
         all_possible_damage = []
         # Fill fake_board with bench cards, then fill the rest with None
         for card in game['o_bench']:
-            fake_board.append(card['health_delta'])
+            fake_board.append(card['health_delta'] + card['health'])
         for card in game['p_board']-len(game['o_bench']):
             fake_board.append(None)
         # Fill attack_board with attacking minions
         for card in game['p_board']:
-            attack_board.append(card['attack_delta'])
+            attack_board.append(card['attack_delta'] + card['attack'])
             # If the minion is overwhelming, record it in is_overwhelming
             if 'overwhelm' in card['keywords']:
                 attack_board.append(True)
@@ -113,7 +113,7 @@ class Service(object):
         # puts minion onto bench array
         if self.check_mana(game, action):
             card_data = self.find_id(game, action)
-            game["p_mana"] -= card_data["cost_delta"]
+            game["p_mana"] -= (card_data["cost_delta"] + card_data["cost"])
             game["p_bench"].append(card_data)
             game['hand'].remove(card_data)
 
@@ -123,7 +123,7 @@ class Service(object):
             card_data = self.find_id(game, action)
             card_data["cost_delta"] -= game["p_spell_mana"]
             game["p_spell_mana"] = 0
-            game["p_mana"] -= card_data["cost_delta"]
+            game["p_mana"] -= (card_data["cost_delta"] + card_data['cost'])
             game["spell_stack"].append(card_data)
             game["hand"].remove(card_data)
 
@@ -213,7 +213,7 @@ class Service(object):
                 # Finds opposing card of overwhelmer
                 opposing_card = self.find_opposing_card(game, action)
                 # Apply overwhelm keyword effect
-                game['o_health'] -= max(0, card['attack_delta'] - opposing_card['health_delta'])
+                game['o_health'] -= max(0, card['attack'] + card['attack_delta'] - opposing_card['health'] + opposing_card['health_delta'])
 
     def barrier(self, game, action):
         pass
@@ -257,10 +257,10 @@ class Service(object):
             if card['uuid'] == action['uuid']:
                 # Finds opposing card of quick attacker
                 opposing_card = self.find_opposing_card(game, action)
-                opposing_card['health_delta'] -= card['attack_delta']
+                opposing_card['health_delta'] -= (card['attack_delta'] + card['attack'])
                 # If opposing card doesnt die, it attacks
-                if opposing_card['health_delta'] > 0:
-                    card['health_delta'] -= opposing_card['attack_delta']
+                if (opposing_card['health_delta'] + opposing_card['health']) > 0:
+                    card['health_delta'] -= (opposing_card['attack_delta'] + opposing_card['attack'])
 
     def tough(self, game, action):
         pass
@@ -277,11 +277,12 @@ class Service(object):
         for card in game[area]:
             if card['uuid'] == action['uuid']:
                 attack_delta = card['attack_delta']
+                attack = card['attack']
                 # Heal for how much attack delta on the lifesteal card is
                 if area == 'o_board':
-                    game['o_health'] = max(20, game['o_health'] + attack_delta)
+                    game['o_health'] = max(20, game['o_health'] + attack_delta + attack)
                 else:
-                    game['p_health'] = max(20, game['p_health'] + attack_delta)
+                    game['p_health'] = max(20, game['p_health'] + attack_delta + attack)
 
 
     def enlightened(self, game, action):
