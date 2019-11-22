@@ -59,21 +59,22 @@ class Service(object):
                 index = combinations.index(defender)
                 attacker = attack_board[index]
                 damage = attacker['attack'] + attacker['attack_delta']
-                defender_attack = defender['attack'] + defender['attack_delta']
-                # We invalidate the scenarios where the defense wouldn't work because of attacker keywords
-                # Really Scuffed, but if attacker is elusive and defender is not elusive, add alot to current damage
-                if 'Elusive' in attacker['keywords'] and 'Elusive' not in defender['keywords']:
-                    current_damage = float('Inf')
-                # Also super scuffed, but if attacker is fearsome and defender has less than 3 attack, add alot to current damage
-                elif 'Fearsome' in attacker['keywords'] and defender_attack < 3:
-                    current_damage = float('Inf')
                 # This means there's no defenders, so attacker hits face
-                elif defender == None:
+                if defender == None:
                     current_damage += damage
-                # This means minion has overwhelming, apply overwhelming calculations
-                elif 'Overwhelm' in attacker['keywords']:
-                    defender_hp = defender['health'] + defender['health_delta']
-                    current_damage += (max(damage-defender_hp, 0))
+                else:
+                    defender_attack = defender['attack'] + defender['attack_delta']
+                    # We invalidate the scenarios where the defense wouldn't work because of attacker keywords
+                    # Really Scuffed, but if attacker is elusive and defender is not elusive, add alot to current damage
+                    if 'Elusive' in attacker['keywords'] and 'Elusive' not in defender['keywords']:
+                        current_damage = float('Inf')
+                    # Also super scuffed, but if attacker is fearsome and defender has less than 3 attack, add alot to current damage
+                    elif 'Fearsome' in attacker['keywords'] and defender_attack < 3:
+                        current_damage = float('Inf')
+                    # This means minion has overwhelming, apply overwhelming calculations
+                    elif 'Overwhelm' in attacker['keywords']:
+                        defender_hp = defender['health'] + defender['health_delta']
+                        current_damage += (max(damage-defender_hp, 0))
             # Store the current_damage to the all_possible_damage list
             all_possible_damage.append(current_damage)
             # Reset current damage
@@ -148,12 +149,12 @@ class Service(object):
             for card in game['p_bench']:
                 if card['uuid'] == action['uuid']:
                     game['p_board'].append(card)
-                    game['p_bench'].remove(card)
-                    # Adds an empty cell in the enemy board
-                    game['o_board'].append(None)
                     # Check if card has challenger
                     if "Challenger" in self.get_keywords(game, action) and action["targets"] != []:
                         self.challenger(game, action)
+                    game['p_bench'].remove(card)
+                    # Adds an empty cell in the enemy board
+                    game['o_board'].append(None)
 
     def unselect_attacker(self, game, action):
         # puts minion from field to bench
@@ -198,7 +199,7 @@ class Service(object):
                     self.quick_attack(game, action_data)
                 else:
                     self.standoff(game, action_data)
-                
+            self.unselect_attacker(game, action_data)  
         game['attack_token'] = False
 
     def pass_turn(self, game, action):
@@ -298,3 +299,69 @@ class Service(object):
 
     def cant_block(self, game, action):
         pass
+a = Service()
+game = {
+     'p_health': 20,
+     'o_health': 20,
+     'p_mana': 10,
+     'o_mana': 10,
+     'p_spell_mana': 3,
+     'o_spell_mana': 3,
+     'attack_token': True,
+     'action_button_text': 'PASS',
+     'p_bench': [],
+     'o_bench': [],
+     'p_board': [],
+     'o_board': [],
+     'hand': [  {
+    "associatedCards": [],
+    "associatedCardRefs": [],
+    "assets": [
+      {
+        "gameAbsolutePath": "http://dd.b.pvp.net/Set1/en_us/img/cards/01PZ020.png",
+        "fullAbsolutePath": "http://dd.b.pvp.net/Set1/en_us/img/cards/01PZ020-full.png"
+      }
+    ],
+    "region": "Piltover & Zaun",
+    "regionRef": "PiltoverZaun",
+    "attack": 1,
+    "attack_delta": 0,
+    "cost": 1,
+    'cost_delta': 0,
+    "health": 1,
+    'health_delta': 0,
+    "description": "",
+    "descriptionRaw": "",
+    "levelupDescription": "",
+    "levelupDescriptionRaw": "",
+    "flavorText": "Her first launch was pure accident: she slipped inside a Progress Day cannon while preening herself. Now she's the toast of Piltover, arcing across the sky to the adoring gasps of the crowds below.",
+    "artistName": "SIXMOREVODKA",
+    "name": "Daring Poro",
+    "cardCode": "01PZ020",
+    'uuid': "12345",
+    "keywords": [
+      "Elusive"
+    ],
+    "keywordRefs": [
+      "Elusive"
+    ],
+    "spellSpeed": "",
+    "spellSpeedRef": "",
+    "rarity": "Common",
+    "rarityRef": "Common",
+    "subtype": "Poro",
+    "supertype": "",
+    "type": "Unit",
+    "collectible": True
+  }],
+     'spell_stack': []
+ }
+
+action = {'uuid': "12345", 'targets': [], 'area': 'hand'}
+action2 = {'uuid': "12345", 'targets': [], 'area': 'p_bench'}
+action3 = {'uuid': "12345", 'targets': [], 'area': 'p_board'}
+
+a.play_minion(game, action)
+a.choose_attacker(game, action2)
+a.attack_phase(game, action)
+print(game['p_bench'])
