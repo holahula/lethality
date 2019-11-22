@@ -14,10 +14,10 @@ class MongoUserRepository(object):
     def find(self, selector):
         return self.db.users.find_one(selector)
 
-    def create(self, puzzle):
-        return self.db.users.insert_one(puzzle)
+    def create(self, user):
+        return self.db.users.insert_one(user)
     
-    def update(self, selector, puzzle):
+    def update(self, selector, user):
         return self.db.users.replace_one(selector, user).modified_count
 
     def delete(self, selector):
