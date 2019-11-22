@@ -23,16 +23,17 @@ def get_card_data(card_id):
     return obj
 
 def fill_puzzle_data(puzzle):
-    for area in ['hand', 'p_bench', 'o_bench', 'p_board', 'o_board']:
-        for i in range(len(puzzle['area'])):
-            card = puzzle['area'][i]
+    for area_name in ['hand', 'p_bench', 'o_bench', 'p_board', 'o_board']:
+        area = getattr(puzzle, area_name)
+        for i in range(len(area)):
+            card = area[i]
             if card is not None:
                 card_data = get_card_data(card.card_id)
                 card_data['uuid'] = card.card_id
                 card_data['attack_delta'] = 0
                 card_data['cost_delta'] = 0
                 card_data['health_delta'] = 0
-                puzzle['area'][i] = card_data
+                area[i] = card_data
 
 # https://developer.okta.com/blog/2018/12/20/crud-app-with-python-flask-react
 
@@ -69,7 +70,7 @@ def puzzle(puzzle_id):
             return json_response(puzzle)
         else:
             return json_response({"error": "no puzzles found"}, 404)
-    
+
     elif request.method == "DELETE":
         if puzzle_service.delete_puzzle(puzzle_id):
             return json_response({"success": "puzzle deleted"}, 200)
@@ -93,7 +94,7 @@ def puzzle_functions():
     elif request.method == "PUT":
         if puzzle_service.update_puzzle(puzzle_req):
             return json_response({"success": "puzzle updated"}, 200)
-        else: 
+        else:
             return json_response({"error": "puzzle not found"}, 404)
 
 # Requires: user_id:string
@@ -114,7 +115,7 @@ def user(user_id):
             return json_response({"success": "user deleted"}, 200)
         else:
             return json_response({"error": "user not found"}, 404)
-            
+
 @app.route("/user", methods = ["POST", "PUT"])
 def user_functions():
     try:
