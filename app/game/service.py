@@ -142,7 +142,6 @@ class Service(object):
             game["spell_stack"].append(card_data)
             game["hand"].remove(card_data)
 
-
     def choose_attacker(self, game, action):
         # puts minion from bench to field
         if game['attack token']:
@@ -185,7 +184,7 @@ class Service(object):
         for card in game['p_board']:
             index = game['p_board'].index(card)
             # Updates action for each individual minion
-            action_data : {'uuid':card['uuid'], 'targets':[], 'area':'p_board'}
+            action_data = {'uuid': card['uuid'], 'targets': [], 'area': 'p_board'}
             # Attack face if no defending minion
             if game['o_board'][index] is None:
                 self.direct_hit(game, action_data)
