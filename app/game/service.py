@@ -3,16 +3,16 @@ import json
 
 class Service(object):
 
-    def get_card_data(self, card_id):
+    def get_card_data(self, cardCode):
         # Gets card data, converts to json
-        r = requests.get(f"https://storage.googleapis.com/lethality/card_data/{card_id}.json")
+        r = requests.get(f"https://storage.googleapis.com/lethality/card_data/{cardCode}.json")
         obj = json.loads(r.text)
         return obj
 
     def check_mana(self, game, action):
         # Checks if you have the mana to play the card, returns boolean
-        card_id = self.find_id(game, action)
-        card_info = self.get_card_data(card_id)
+        cardCode = self.find_id(game, action)
+        card_info = self.get_card_data(cardCode)
         card_mana = card_info["cost"]
         available_mana = game["p_mana"]
         if card_info["spellSpeed"] != "":
@@ -23,16 +23,16 @@ class Service(object):
             return False
 
     def find_id(self, game, action):
-        # Finds the id of the card given the uuid and area, returns card_id
+        # Finds the id of the card given the uuid and area, returns cardCode
         uuid = action["uuid"]
         area = action["area"]
         for card in game[area]:
             if card["uuid"] == uuid:
-                return card["card_id"]
+                return card["cardCode"]
     
     def get_keywords(self, game, action):
-        card_id = self.find_id(game, action)
-        card_info = self.get_card_data(card_id)
+        cardCode = self.find_id(game, action)
+        card_info = self.get_card_data(cardCode)
         return card_info["keywords"]
 
     # 1-to-1 matching with easy endpoints for mogen
@@ -55,7 +55,7 @@ class Service(object):
     #     'attack_token': True,
     #     'action_button_text': 'PASS',
     #     'p_bench': [
-    #         {'uuid': '12345', 'card_id': 'RITO'}
+    #         {'uuid': '12345', 'cardCode': 'RITO'}
     #     ],
     #     'o_bench': [],
     #     'p_board': [],
@@ -77,7 +77,7 @@ class Service(object):
             for card in game["hand"]:
                 if card["uuid"] == action["uuid"]:
                     # Get the wanted card_data, use up its mana and move it to the bench
-                    card_data = self.get_card_data(card["card_id"])
+                    card_data = self.get_card_data(card["cardCode"])
                     game["p_mana"] -= card_data["cost"]
                     game["p_bench"].append(card)
                     game['hand'].remove(card)
@@ -88,7 +88,7 @@ class Service(object):
             for card in game["hand"]:
                 if card["uuid"] == action["uuid"]:
                     # Remove spell mana first, then use normal mana, remove card from hand and put to spell stack
-                    card_data = self.get_card_data(card["card_id"])
+                    card_data = self.get_card_data(card["cardCode"])
                     card_data["cost"] -= game["p_spell_mana"]
                     game["p_spell_mana"] = 0
                     game["p_mana"] -= card_data["cost"]
@@ -123,7 +123,7 @@ class Service(object):
     def attack_phase(self, game, action):
         # AI blocks highest attack minions
         # Spells get played first
-        # Then attack phase begins
+        # Go through each matchup, check keywords for both sides of board and attack
         pass
 
     def pass_turn(self, game, action):
@@ -213,7 +213,17 @@ class Service(object):
         pass
 
     def life_steal(self, game, action):
-        pass
+        # Searches for card in either p_bench or o_bench
+        area = action['area']
+        for card in game[area]:
+            if card['uuid'] == action['uuid']:
+                attack_delta = card['attack_delta']
+                # Heal for how much attack delta on the lifesteal card is
+                if area == 'o_board':
+                    game['o_health'] = max(20, game['o_health'] + attack_delta)
+                else:
+                    game['p_health'] = max(20, game['p_health'] + attack_delta)
+
 
     def enlightened(self, game, action):
         pass
