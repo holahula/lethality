@@ -166,7 +166,7 @@ class Service(object):
     def adjust_opponent_board(self, game, action):
         while len(game['p_board']) > len(game['o_board']):
             game['o_board'].append(None)
-        while len(game['p_board']) > len(game['o_board']):
+        while len(game['p_board']) < len(game['o_board']):
             game['o_board'].remove(None)
 
     def choose_attacker(self, game, action):
@@ -193,7 +193,7 @@ class Service(object):
                 game['p_board'].remove(card)
                 game['p_bench'].append(card)
         self.adjust_opponent_board(game, action)
-
+ 
     def find_opposing_card(self, game, action):
         # Finds opposing card during battle phase
         area = action['area']
