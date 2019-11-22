@@ -223,6 +223,8 @@ class Service(object):
                     self.barrier(game, action_data)
                 elif 'Tough' in card['keywords'] and (opposing_field['attack']+opposing_field['attack_delta'] > 0):
                     self.tough(game, action_data)
+                if 'Life Steal' in card['keywords']:
+                    self.life_steal(game, action_data)
                 if 'Quick Attack'in card['keywords']:
                     self.quick_attack(game, action_data)
                 else:
