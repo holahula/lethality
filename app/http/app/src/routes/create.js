@@ -155,35 +155,22 @@ function renderPlayerBench(cards, dispatch) {
         // let cardImage = require('../img/cards/' + card.cardCode + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
         return (
-            <Draggable key={card.uuid} index={index} draggableId={card.uuid}>
-                {(provided, snapshot) => (
+
                     <div>
                      <img
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
 
                         key={index}
                         index={index}
                         src={cardImage}
                         className="Bench-card"
 
-                        style={provided.draggableProps.style}
-
                         onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
                         onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
                         onMouseLeave={(event) => onMouseExit(event, dispatch)}
-
-                        style={{...provided.draggableProps.style,
-                            ...updateCardSize(snapshot)
-                        }}
                      />
                     </div>
-                )}
-               
-            </Draggable>
-        );
-    });
+                )
+        })
 
     if (render_obj == null) { return emptyDraggable() }
     return render_obj;
@@ -264,22 +251,14 @@ function renderPlayerBoard(cards, dispatch) {
         // let cardImage = require('../img/cards/' + card.cardCode + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
         return (
-            <Draggable key={card.uuid} index={index} draggableId={card.uuid}>
-                {(provided, snapshot) => (
+
                     <div>
                     <img
-                        ref={provided.innerRef}
 
                         index={index}
                         key={index}
                         src={cardImage}
                         className="Board-card"
-
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{...provided.draggableProps.style,
-                            ...updateCardSize(snapshot)
-                        }}
 
                         onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
                         onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
@@ -289,13 +268,11 @@ function renderPlayerBoard(cards, dispatch) {
                     onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
                     onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
                     onMouseLeave={(event) => onMouseExit(event, dispatch)}
-                    style={ showHealthIndicator(snapshot) }
                     >
                         <span className="Board-card-health-text">{card.health}</span>
                     </div>
                     </div>
-                )}
-            </Draggable>
+
         );
     });
     return render_obj;
@@ -542,9 +519,7 @@ function Create({game_state, dispatch}) {
 
                                         <div className="Player-board">
 
-                                            <div className="Player-board-overlay"style={draggingOverBoard(snapshot, board)}>
-                                                <span className="Player-board-overlay-text">&uarr; PLAY CARD &uarr;</span>
-                                            </div>
+                                        
                                             
                                             <div className="Player-board-main">
                                                 <span className="Description-font">PLAYER BOARD</span>
@@ -563,9 +538,7 @@ function Create({game_state, dispatch}) {
                                 <Droppable droppableId="player_bench" direction="horizontal">
                                     {(provided, snapshot) => (
                                         <div className="Player-bench">
-                                            <div className="Player-bench-overlay"style={draggingOverBench(snapshot, board)}>
-                                                <span className="Player-bench-overlay-text">&rarr; MOVE TO BENCH &larr;</span>
-                                            </div>
+        
                                             <span className="Description-font">PLAYER BENCH</span>
                                             <div className="Bench-row"  ref={provided.innerRef} {...provided.droppableProps}>
                                                 {renderPlayerBench(board.p_bench, dispatch)}

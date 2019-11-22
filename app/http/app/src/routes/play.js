@@ -284,11 +284,22 @@ function renderOpponentBoard(cards, dispatch) {
     let render_obj = cards.map( (card, index) => {
         //let cardImage = require('../img/cards/' + card.cardCode + '.png');
         let cardImage = "https://storage.googleapis.com/lethality/cards/" + card.cardCode + '-sm.png';
-        return <img index={index} src={cardImage} className="Board-card No-grab"
+        return (
+        <div><img index={index} src={cardImage} className="Board-card No-grab"
             onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
             onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
             onMouseLeave={(event) => onMouseExit(event, dispatch)}
-        />;
+        />
+        <div className="Board-card-health"
+                    onMouseEnter={(event) => onMouseEnter(event, card, dispatch)}
+                    onMouseMove= {(event) => hoverOverCard(event, card, dispatch)}
+                    onMouseLeave={(event) => onMouseExit(event, dispatch)}
+                    >
+                        <span className="Board-card-health-text">{card.health}</span>
+                    </div>
+
+        </div>
+        );
     });
     return render_obj;
 }

@@ -10,7 +10,8 @@ import {
     USERNAME_FIELD_CHANGED,
     USER_SIGNED_OUT,
     GAME_WON,
-    CREATE_BUTTON_PRESSED
+    CREATE_BUTTON_PRESSED,
+    PUZZLE_LOADED
 } from '../actions/MainActions';
 import DataDragon from '../DataDragon';
 import { CARD_ADDED, FIELD_UPDATED, PUZZLE_CREATED } from '../actions/CreateActions';
@@ -93,7 +94,7 @@ const initialState = {
         "p_board": cardGenerator(0),
         "p_bench": cardGenerator(0),
         "hand": cardGenerator(10),
-        "spell_stack": cardGenerator(3),
+        "spell_stack": [],
     },
 
     custom_game_board: {
@@ -129,12 +130,17 @@ const initialState = {
 
 function lethalApp(state = initialState, action) {
     switch(action.type) {
+        case PUZZLE_LOADED:
+            return Object.assign({}, state, {
+                game_state: action.puzzle
+            });
         case PUZZLE_CREATED:
             return Object.assign({}, state, {
                 custom_game_board: {
                     ...state.custom_game_board,
-                    show_popup: false
-                }
+                    show_popup: false,
+                },
+                game_state: action.puzzle
             });
         case CREATE_BUTTON_PRESSED:
             return Object.assign({}, state, {

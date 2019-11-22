@@ -19,15 +19,21 @@ export const HOVERED_AWAY_FROM_CARD = "HOVERED_AWAY_FROM_CARD";;
 export const USER_SIGNED_IN = "USER_SIGNED_IN";
 export const USERNAME_FIELD_CHANGED = "USERNAME_FIELD_CHANGED";
 export const USER_SIGNED_OUT = "USER_SIGNED_OUT";
+export const PUZZLE_LOADED = "PUZZLE_LOADED";
 
 export const GAME_WON = "GAME_WON";
 
 
 export const CREATE_BUTTON_PRESSED = "CREATE_BUTTON_PRESSED";
 
+
+
+
 /*
  * Action creators
  */
+
+
 
  export function createButtonPressed() {
     return {
@@ -75,10 +81,17 @@ export const CREATE_BUTTON_PRESSED = "CREATE_BUTTON_PRESSED";
             })
                         
             // get puzzle
-            Axios.get(ENDPOINT+"puzzles", {params: {elo}})
+            Axios.get(ENDPOINT+"puzzles/"+elo)
             .then(puzzle_res => {
                 console.log(puzzle_res.data);
-            });
+                dispatch({
+                    type: PUZZLE_LOADED,
+                    puzzle: puzzle_res.data
+                })
+            })
+            .catch(err => {
+                console.error(err);
+            })
 
         })
         .catch(err => {
@@ -98,10 +111,17 @@ export const CREATE_BUTTON_PRESSED = "CREATE_BUTTON_PRESSED";
                     })
                                 
                     // get puzzle
-                    Axios.get(ENDPOINT+"puzzle/1000")
+                    Axios.get(ENDPOINT+"puzzles/1000")
                     .then(puzzle_res => {
                         console.log(puzzle_res.data);
-                    });
+                        dispatch({
+                            type: PUZZLE_LOADED,
+                            puzzle: puzzle_res.data
+                        })
+                    })
+                    .catch(err => {
+                        console.error(err);
+                    })
                     
                 }
                 }
@@ -181,7 +201,6 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
     return {
         type: MOVED_TO_BOARD,
         game_state: board
-
     }
  }
 
@@ -199,6 +218,8 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
     // update board
     board.p_bench = bench;
     board.hand = new_hand;
+    
+    // sent post request (to update mana)
 
     // send to reducer
     return {

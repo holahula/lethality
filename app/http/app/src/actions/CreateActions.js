@@ -27,10 +27,19 @@ export function uploadLethal(state){
         .then(response => {
             console.log(response);
             // once the puzzle is created, load it in
-            dispatch({
-                type: PUZZLE_CREATED
+            
+            // grab the puzzle
+            const puzzle_id = puzzle.puzzle_id;
+            Axios.get(ENDPOINT+'puzzle/'+puzzle_id)
+            .then(response => {
+                dispatch({
+                    type: PUZZLE_CREATED,
+                    puzzle: response.data
+                })
+                alert("Puzzle Created + Loaded!");
             })
-            alert("puzzle created!");
+            .catch(err=>console.log(err));
+            
         })
         .catch(err => {
             console.error(err);
