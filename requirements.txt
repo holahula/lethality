@@ -2,3 +2,4 @@ marshmallow
 pymongo
 flask
 flask-cors 
+requests
