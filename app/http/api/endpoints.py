@@ -1,7 +1,8 @@
-#FLASK_APP=$PWD/app/http/api/endpoints.py FLASK_ENV=development python3 -m flask run --port=4433
-#FLASK_APP=$PWD/app/http/api/endpoints.py FLASK_ENV=development python -m flask run --port=4433
-
 from flask import Flask, json, g, request
+from flask_cors import CORS
+from marshmallow import ValidationError
+import requests
+
 from app.idp.service import Service as IdentityService
 from app.idp.schema import IdentitySchema
 
@@ -9,12 +10,6 @@ from app.puzzle.service import Service as PuzzleService
 from app.puzzle.schema import PuzzleSchema
 
 from app.game.service import Service as Game
-
-from flask_cors import CORS
-
-from marshmallow import ValidationError
-
-import requests
 
 app = Flask(__name__)
 CORS(app)
