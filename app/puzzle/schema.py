@@ -16,12 +16,12 @@ class GameStateSchema(Schema):
 
     action_button_text = fields.Str()
 
-    p_bench = fields.Nested(CardSchema())
-    o_bench = fields.Nested(CardSchema())
-    p_board = fields.Nested(CardSchema())
-    o_board = fields.Nested(CardSchema())
+    p_bench = fields.List(fields.Nested(CardSchema()))
+    o_bench = fields.List(fields.Nested(CardSchema()))
+    p_board = fields.List(fields.Nested(CardSchema()))
+    o_board = fields.List(fields.Nested(CardSchema()))
 
-    spell_stack = fields.Nested(CardSchema())
+    spell_stack = fields.List(fields.Nested(CardSchema()))
     
 class PuzzleSchema(GameStateSchema):
     puzzle_id = fields.Int(required=True)
