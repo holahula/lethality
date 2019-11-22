@@ -34,20 +34,24 @@ class Service(object):
         fake_board = []
         attack_board = []
         current_damage = 0
+        attack_board_count = 0
         # List of the damage taken from all possibilities of defending
         all_possible_damage = []
-        # Fill fake_board with bench cards, then fill the rest with None
-        for card in game['o_bench']:
-            if "Can't Block" not in card['keywords']:
-                # If can block, add card to defending lineup
-                fake_board.append(card)
-        for card in game['p_board']-len(game['o_bench']):
-            fake_board.append(None)
         # Fill attack_board with attacking minions
         for card in game['p_board']:
-            attack_board.append(card)
+            index = game['p_board'].index(card)
+            # Checking if challenger cards already have a standoff
+            if game['o_board'][index] is None:
+                attack_board.append(card)
+        # Fill fake_board with bench cards, then fill the rest with None
+        for card in game['o_bench']:
+            # If can block, add card to defending lineup
+            if "Can't Block" not in card['keywords']:
+                fake_board.append(card)
+        while len(attack_board) > len(fake_board):
+            fake_board.append(None)
         # Find all permutations of defending
-        perms = list(itertools.permutations(fake_board, len(game['p_board'])))
+        perms = list(itertools.permutations(fake_board, len(attack_board)))
         # Do a quick combat simulation of each single permutation to find overall damage
         for combinations in perms:
             # Go through each and every single standoff
@@ -56,6 +60,7 @@ class Service(object):
                 attacker = attack_board[index]
                 damage = attacker['attack'] + attacker['attack_delta']
                 defender_attack = defender['attack'] + defender['attack_delta']
+                # We invalidate the scenarios where the defense wouldn't work because of attacker keywords
                 # Really Scuffed, but if attacker is elusive and defender is not elusive, add alot to current damage
                 if 'Elusive' in attacker['keywords'] and 'Elusive' not in defender['keywords']:
                     current_damage += 1000000
@@ -74,9 +79,14 @@ class Service(object):
             # Reset current damage
             current_damage = 0
         # Find index of lowest possible damage
-        lowest_damage = all_possible_damage.index(min(all_possible_damage))
-        # Return the list of defenders that will let you take least amount of damage
-        return perms[lowest_damage]
+        lowest_damage_index = all_possible_damage.index(min(all_possible_damage))
+        # Grabs list of best defense, and places them accordingly on the board
+        best_defense = perms[lowest_damage_index]
+        for card in attack_board:
+            index = game['p_board'].index(card)
+            game['o_board'][index] = best_defense[attack_board_count]
+            attack_board_count += 1
+
         
 
     # 1-to-1 matching with easy endpoints for mogen
