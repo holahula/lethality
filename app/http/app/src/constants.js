@@ -1,1 +1,1 @@
-export const ENDPOINT = ":4433/";
+export const ENDPOINT = "http://35.226.43.98:4433/";
