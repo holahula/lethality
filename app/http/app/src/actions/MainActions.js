@@ -154,29 +154,38 @@ export const CREATE_BUTTON_PRESSED = "CREATE_BUTTON_PRESSED";
  }
 
 export function cardMovedFromBoardToBench(board, index_on_board) {
+    return dispatch => {
+        let player_board = Array.from(board.p_board);
+        let bench = Array.from(board.p_bench);
 
-    let player_board = Array.from(board.p_board);
-    let bench = Array.from(board.p_bench);
+        // get the card
+        let card = player_board.slice(index_on_board, index_on_board+1)[0];
+        // // create new hand with the card removed
+        // let new_board = player_board.slice(0, index_on_board).concat(player_board.slice(index_on_board+1, player_board.length))
+        // // push card to the bench
+        // bench.push(card);
 
-    // get the card
-    let card = player_board.slice(index_on_board, index_on_board+1)[0];
-    // create new hand with the card removed
-    let new_board = player_board.slice(0, index_on_board).concat(player_board.slice(index_on_board+1, player_board.length))
-    // push card to the bench
-    bench.push(card);
+        // // update board
+        // board.p_bench = bench;
+        // board.p_board = new_board;
 
-    // update board
-    board.p_bench = bench;
-    board.p_board = new_board;
-
-    // send request
-
-
-    // send to reducer
-    return {
-        type: MOVED_TO_BENCH,
-        game_state: board
-    }
+        // send request
+        Axios.post(ENDPOINT+'action', {
+            game: board,
+            action: {
+                uuid: card.uuid,
+                targets: [],
+                area: 'p_board',
+            },
+            action_to_take: "unselect_attacker"
+        }).then(board_res => {
+            // send to reducer
+            dispatch({
+                type: BOARD_RECEIVED,
+                board: board_res.data
+            });
+        })
+        }
  }
 
  export function cardMovedFromBenchToBoard(board, index_in_bench) {
@@ -186,8 +195,6 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
     //  return {
     //      type: GAME_WON
     //  }
-
-    let player_board = Array.from(board.p_board);
     let bench = Array.from(board.p_bench);
 
     // // get the card
@@ -201,52 +208,54 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
     // // update board
     // board.p_bench = new_bench;
     // board.p_board = player_board;
-
     // send request
-    Axios.post('action', 
+    Axios.post(ENDPOINT+'action', 
     {
         game: board,
         action: {
             uuid: card.uuid,
             targets: [],
-            area: 'p_board',
+            area: 'p_bench',
         },
         action_to_take: "choose_attacker"
     })
     .then(action_res => {
+        console.log(action_res.data);
         let new_board = action_res.data;
 
         // send to reducer
         dispatch({
-            type: MOVED_TO_BOARD,
-            game_state: new_board
+            type: BOARD_RECEIVED,
+            board: new_board
         });
     } )
     .catch(err => console.error(err))
-
     }
-
  }
 
  export function goButtonPressed(board) {
     return dispatch => {
-        let board = board.p_bench;
 
         // pboard
         let p_board = board.p_board;
-        uuid = "";
+        let uuid = "";
         if (p_board) {
             uuid = p_board[0];
         }
 
-        Axios.post(ENDPOINT+'action', {
-            board,
+        let options = {
+            game: board,
             action: {
                 uuid,
                 targets: [],
                 area: 'p_board',
             },
             action_to_take: "attack_phase"
+        }
+        console.log(options);
+
+        Axios.post(ENDPOINT+'action', {
+            ...options
         })
         .then(response => {
             let rec_board = response.data;
@@ -263,7 +272,6 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
 
  export function cardMovedFromHandToBench(board, index_in_hand) {
     return dispatch => {
-        let bench = Array.from(board.p_bench);
         let current_hand = Array.from(board.hand);
 
         // get the card
@@ -283,18 +291,15 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
             action: {
                 uuid: card.uuid,
                 targets: [],
-                area: 'p_bench'
+                area: 'hand'
             },
             action_to_take: "play_minion"
         })
         .then(cardRes => {
-            let response = cardRes.data;
-            // board is in root
-
             // send to reducer
             dispatch({
-                type: MOVED_TO_BENCH,
-                game_state: response
+                type: BOARD_RECEIVED,
+                board: cardRes.data
             });
         })
         .catch(err => console.error(err))

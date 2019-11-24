@@ -61,6 +61,9 @@ export function create_cardAdded(destination, card_id, board) {
 
         let new_card = {... Cards[card_id]};
         new_card.uuid = uuid();
+        new_card.health_delta = 0;
+        new_card.cost_delta = 0;
+        new_card.attack_delta = 0;
         
         // get card data
         // add card to board

@@ -42,7 +42,3 @@ services:
       - net
     depends_on:
       - lethality-be
-
-    
-# export MONGO_URL=mongodb://admin:admin@0.0.0.0:27017
-#FLASK_APP=$PWD/app/http/api/endpoints.py FLASK_ENV=development python3 -m flask run --port=4433
