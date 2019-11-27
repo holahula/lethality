@@ -30,7 +30,15 @@ services:
       - net
     depends_on: 
       - mongo
-
-    
-# export MONGO_URL=mongodb://admin:admin@0.0.0.0:27017
-#FLASK_APP=$PWD/app/http/api/endpoints.py FLASK_ENV=development python3 -m flask run --port=4433
+  lethality-fe:
+    build:
+      context: app/http/app
+    image: lethality-fe
+    restart: always
+    ports:
+      - "80:80"
+      - "3000:3000"
+    networks:
+      - net
+    depends_on:
+      - lethality-be

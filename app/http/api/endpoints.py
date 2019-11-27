@@ -1,3 +1,5 @@
+import sys
+
 from flask import Flask, json, g, request
 from flask_cors import CORS, cross_origin
 from marshmallow import ValidationError
@@ -12,7 +14,10 @@ from app.puzzle.schema import PuzzleSchema
 from app.game.service import Service as Game
 
 app = Flask(__name__)
+app.debug = True
 CORS(app)
+
+print("app started", file=sys.stdout)
 
 app.config["CORS_HEADERS"] = "Content-Type"
 
@@ -148,14 +153,16 @@ def take_action():
     # getting necessary objects
     game = args["game"]
     action = args["action"]
-    method = args["method"]
+    action_to_take = args["action_to_take"]
+
     # game service instance
     g = Game()
     # get functions matching name of method given
-    f = getattr(g, method)
+    # f = getattr(g, method)
     # call with game and action
-    f(game, action)
+    # f(game, action)
     # return mutated game object
+    g.command(game, action, action_to_take)
     return json_response(game)
 
 # POST:
