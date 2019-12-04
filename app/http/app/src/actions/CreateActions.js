@@ -22,6 +22,7 @@ export function uploadLethal(state){
 
         // post
         Axios.post(ENDPOINT+'puzzle', {
+            mode: 'cors',
             ...puzzle
         })
         .then(response => {

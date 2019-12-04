@@ -103,6 +103,7 @@ export const CREATE_BUTTON_PRESSED = "CREATE_BUTTON_PRESSED";
         .catch(err => {
             console.log(err)
             Axios.post(ENDPOINT+'user', {
+                mode: 'cors',
                 user_id: username,
                 elo: 1000,
             })
@@ -171,6 +172,7 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
 
         // send request
         Axios.post(ENDPOINT+'action', {
+            mode: 'cors',
             game: board,
             action: {
                 uuid: card.uuid,
@@ -211,6 +213,7 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
     // send request
     Axios.post(ENDPOINT+'action', 
     {
+        mode: 'cors',
         game: board,
         action: {
             uuid: card.uuid,
@@ -255,6 +258,7 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
         console.log(options);
 
         Axios.post(ENDPOINT+'action', {
+            mode: 'cors',
             ...options
         })
         .then(response => {
@@ -287,6 +291,7 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
         
         // sent post request (to update mana)
         Axios.post(ENDPOINT+"action", {
+            mode: 'cors',
             game: board,
             action: {
                 uuid: card.uuid,
