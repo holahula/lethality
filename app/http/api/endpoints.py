@@ -21,7 +21,7 @@ print("app started", file=sys.stdout)
 
 def get_card_data(cardCode):
     # Gets card data, converts to json
-    r = requests.get("https://storage.googleapis.com/lethality/card_data/{cardCode}.json")
+    r = requests.get(f"https://storage.googleapis.com/lethality/card_data/{cardCode}.json")
     obj = json.loads(r.text)
     return obj
 
