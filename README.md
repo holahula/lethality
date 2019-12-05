@@ -15,7 +15,10 @@ To launch the game, simply run: `docker-compose up`
 
 The UI is live at `localhost:80`, and the backend API at `localhost:4433`
 
-### Issues
+
+
+### Notes
+- You must create a puzzle first before you can play. Actions in the `play` screen before a puzzle is created will not work. 
 - There might be a issue with the view model, if the play button is covered up when in the create menu, simply zoom out (Ctrl/Cmd & -). Small sizing error!
 
 ![Create Puzzles!](Screenshots/puzzlecreator.png)
