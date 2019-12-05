@@ -24,8 +24,7 @@ app.config["CORS_HEADERS"] = "Content-Type"
 def get_card_data(cardCode):
     # Gets card data, converts to json
     r = requests.get("https://storage.googleapis.com/lethality/card_data/{cardCode}.json")
-    obj = json.loads(r.text)
-    return obj
+    return r.json()
 
 def fill_puzzle_data(puzzle):
     for area_name in ["hand", "p_bench", "o_bench", "p_board", "o_board"]:
