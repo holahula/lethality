@@ -19,8 +19,6 @@ CORS(app)
 
 print("app started", file=sys.stdout)
 
-app.config["CORS_HEADERS"] = "Content-Type"
-
 def get_card_data(cardCode):
     # Gets card data, converts to json
     r = requests.get("https://storage.googleapis.com/lethality/card_data/{cardCode}.json")
@@ -44,13 +42,13 @@ def fill_puzzle_data(puzzle):
             print("ERROR:", error, area_name)
 
 @app.route("/", methods = ["GET"])
-@cross_origin(supports_credentials=True)
+@cross_origin()
 def entry():
     return json_response({"yes": "no"}, 200)
 
 # Returns the next puzzle based on elo
 @app.route("/puzzles/<int:elo>", methods = ["GET"])
-@cross_origin(supports_credentials=True)
+@cross_origin()
 def next_puzzle(elo):
     puzzles = PuzzleService().find_all_puzzles()
 
@@ -66,7 +64,7 @@ def next_puzzle(elo):
         return json_response({"error": "no puzzles found (closest elo)"}, 404)
 
 @app.route("/puzzle/<string:puzzle_id>", methods = ["GET", "DELETE"])
-@cross_origin(supports_credentials=True)
+@cross_origin()
 def puzzle(puzzle_id):
     puzzle_service = PuzzleService()
 
@@ -86,7 +84,7 @@ def puzzle(puzzle_id):
             return json_response({"error": "puzzle not found"}, 404)
 
 @app.route("/puzzle", methods = ["POST", "PUT"])
-@cross_origin(supports_credentials=True)
+@cross_origin()
 def puzzle_functions():
     try:
         print(json.loads(request.data))
@@ -109,7 +107,7 @@ def puzzle_functions():
 # Requires: user_id:string
 # Returns: user: app.idp.user
 @app.route("/user/<string:user_id>", methods = ["GET", "DELETE"])
-@cross_origin(supports_credentials=True)
+@cross_origin()
 def user(user_id):
     identity_service = IdentityService()
 
@@ -127,7 +125,7 @@ def user(user_id):
             return json_response({"error": "user not found"}, 404)
 
 @app.route("/user", methods = ["POST", "PUT"])
-@cross_origin(supports_credentials=True)
+@cross_origin()
 def user_functions():
     try:
         user_req = IdentitySchema().load(json.loads(request.data))
@@ -147,7 +145,7 @@ def user_functions():
             return json_response({"error": "user not found"}, 404)
 
 @app.route("/action", methods = ["POST"])
-@cross_origin(supports_credentials=True)
+@cross_origin()
 def take_action():
     args = json.loads(request.data)
     # getting necessary objects

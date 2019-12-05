@@ -74,12 +74,13 @@ export const CREATE_BUTTON_PRESSED = "CREATE_BUTTON_PRESSED";
         //     elo: 1000,
         // });
 
-        const options = {params: {user_id: username}};
+        console.log("Attempting to login");
 
         Axios.get(ENDPOINT+'user/'+username)
         .then(login_res => {
             const username = login_res.data.user_id;
             const elo = login_res.data.elo;
+            console.log("Logged in");
             dispatch({
                 type: USER_SIGNED_IN,
                 username,
@@ -89,6 +90,7 @@ export const CREATE_BUTTON_PRESSED = "CREATE_BUTTON_PRESSED";
             // get puzzle
             Axios.get(ENDPOINT+"puzzles/"+elo)
             .then(puzzle_res => {
+                console.log("Got puzzle");
                 console.log(puzzle_res.data);
                 dispatch({
                     type: PUZZLE_LOADED,
@@ -103,7 +105,6 @@ export const CREATE_BUTTON_PRESSED = "CREATE_BUTTON_PRESSED";
         .catch(err => {
             console.log(err)
             Axios.post(ENDPOINT+'user', {
-                mode: 'cors',
                 user_id: username,
                 elo: 1000,
             })
@@ -172,7 +173,6 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
 
         // send request
         Axios.post(ENDPOINT+'action', {
-            mode: 'cors',
             game: board,
             action: {
                 uuid: card.uuid,
@@ -213,7 +213,6 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
     // send request
     Axios.post(ENDPOINT+'action', 
     {
-        mode: 'cors',
         game: board,
         action: {
             uuid: card.uuid,
@@ -258,7 +257,6 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
         console.log(options);
 
         Axios.post(ENDPOINT+'action', {
-            mode: 'cors',
             ...options
         })
         .then(response => {
@@ -291,7 +289,6 @@ export function cardMovedFromBoardToBench(board, index_on_board) {
         
         // sent post request (to update mana)
         Axios.post(ENDPOINT+"action", {
-            mode: 'cors',
             game: board,
             action: {
                 uuid: card.uuid,
